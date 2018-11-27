@@ -6,7 +6,7 @@ An Android library which simply gets you user's most accurate current location. 
 + No need to update this library from time to time (latest update are automatically fetched on the fly!)
 + Simple plug and play design.
 
-## Setup
+# Setup
 
 #### Setup #1 - Project's build.gradle
 In your project's `build.gradle` file, under `allprojects`, under `repositories`, add the following line:
@@ -22,7 +22,7 @@ In your app's `build.gradle` file, under `dependencies`, add the following line:
 implementation 'com.github.mumayank:AirLocation:master-SNAPSHOT'
 ```
 
-## Usage
+# Usage
 
 #### Rule #1
 
@@ -48,6 +48,6 @@ airLocation = AirLocation(this, true, true, object: AirLocation.LocationUtilCall
             })
 ```
 
-#### Rule #3
+#### Rule #3 - IMP
 
 If you ever `override` `onActivityResult` or `onRequestPermissionsResult` functions in your activity, then you must call their respective super functions.
