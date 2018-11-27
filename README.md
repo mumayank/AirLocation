@@ -6,7 +6,7 @@ An Android library which simply gets you user's most accurate current location. 
 + Location is accurate up to 7 decimal places (highest accuracy)
 + No need to add any permissions in manifest
 + No need to add google play services location lib in gradle
-+ No need to update this library from time to time (latest update are automatically fetched on the fly!)
++ No need to update this library from time to time (latest updates are automatically fetched on the fly!)
 + Simple plug and play design.
 
 # Setup
