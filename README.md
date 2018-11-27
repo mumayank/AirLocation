@@ -1,4 +1,7 @@
+![alt text](https://github.com/mumayank/AirLocation/blob/master/image.png "Logo")
+
 # AirLocation
+
 An Android library which simply gets you user's most accurate current location. Period.
 + Location is accurate up to 7 decimal places (highest accuracy)
 + No need to add any permissions in manifest
