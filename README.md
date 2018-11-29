@@ -6,24 +6,29 @@ An Android library which simply gets you user's most accurate current location. 
 + Location is accurate up to 7 decimal places (highest accuracy)
 + No need to add any permissions in manifest
 + No need to add google play services location lib in gradle
-+ No need to update this library from time to time (latest updates are automatically fetched on the fly!)
 + Simple plug and play design.
+
+[![](https://jitpack.io/v/mumayank/AirLocation.svg)](https://jitpack.io/#mumayank/AirLocation)
 
 # Setup
 
-#### Setup #1 - Project's build.gradle
-In your project's `build.gradle` file, under `allprojects`, under `repositories`, add the following line:
+Add this line in your root build.gradle at the end of repositories:
 
 ```gradle
-maven { url 'https://jitpack.io' }
-```
-
-#### Setup #2 - App's build.gradle
-In your app's `build.gradle` file, under `dependencies`, add the following line:
-
+allprojects {
+  repositories {
+    ...
+    maven { url 'https://jitpack.io' } // this line
+  }
+}
+  ```
+Add this line in your app build.gradle:
 ```gradle
-implementation 'com.github.mumayank:AirLocation:master-SNAPSHOT'
+dependencies {
+  implementation 'com.github.mumayank:AirLocation:LATEST_VERSION' // this line
+}
 ```
+where LATEST_VERSION is [![](https://jitpack.io/v/mumayank/AirLocation.svg)](https://jitpack.io/#mumayank/AirLocation)
 
 # Usage
 
@@ -40,14 +45,23 @@ Everytime you want to fetch location, just initialize `airLocation` variable (av
 Example:
 
 ```kotlin
-airLocation = AirLocation(this, true, true, object: AirLocation.LocationUtilCallbacks {
-                override fun onFailed(locationFailedEnum: AirLocation.LocationFailedEnum) {
-                    // do something
+airLocation = AirLocation(this, true, true, object: AirLocation.Callbacks {
+                override fun beforeStart() {
+                    // do something like show progress bar
+                }
+
+                override fun onComplete() {
+                    // do something like hide progress bar, as this is called on both: onSuccess and onFailure
                 }
 
                 override fun onSuccess(location: Location) {
-                    // do something
+                    // do something like use this location
                 }
+
+                override fun onFailed(locationFailedEnum: AirLocation.LocationFailedEnum) {
+                    // do something if required
+                }
+
             })
 ```
 
