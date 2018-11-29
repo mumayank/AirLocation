@@ -32,15 +32,9 @@ where LATEST_VERSION is [![](https://jitpack.io/v/mumayank/AirLocation.svg)](htt
 
 # Usage
 
-#### Rule #1
++ The activity in which you want to fetch location, must extend `AirLocationActivity` (FYI: AirLocationActivity extends AppCompatActivity)
 
-The activity in which you want to fetch location, must extend `AirLocationActivity` 
-
-(FYI: AirLocationActivity extends AppCompatActivity)
-
-#### Rule #2
-
-Everytime you want to fetch location, just initialize `airLocation` variable (available from parent class `AirLocationActivity`)
++ Everytime you want to fetch location, just initialize `airLocation` variable (available from parent class `AirLocationActivity`)
 
 Example:
 
@@ -65,6 +59,4 @@ airLocation = AirLocation(this, true, true, object: AirLocation.Callbacks {
             })
 ```
 
-#### Rule #3 - IMP
-
-If you ever `override` `onActivityResult` or `onRequestPermissionsResult` functions in your activity, then you must call their respective super functions.
++ If you ever `override` `onActivityResult` or `onRequestPermissionsResult` functions in your activity, then you must call their respective super functions.
