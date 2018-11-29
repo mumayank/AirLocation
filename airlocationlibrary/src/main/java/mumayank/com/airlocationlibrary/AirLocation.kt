@@ -15,10 +15,16 @@ import android.support.v4.content.ContextCompat
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
+import mumayank.com.airdialog.AirDialog
 import java.util.ArrayList
 
 @SuppressLint("MissingPermission")
-class AirLocation(airLocationActivity: AirLocationActivity, shouldWeRequestPermissions: Boolean, shouldWeRequestOptimization: Boolean, locationUtilCallbacks: LocationUtilCallbacks) {
+class AirLocation(
+    private val airLocationActivity: AirLocationActivity,
+    private val shouldWeRequestPermissions: Boolean,
+    private val shouldWeRequestOptimization: Boolean,
+    private val callbacks: Callbacks
+) {
 
     /**
      * TODO USAGES:
@@ -27,12 +33,15 @@ class AirLocation(airLocationActivity: AirLocationActivity, shouldWeRequestPermi
      * 4. For every location request, init airLocation var, already available from AirLocationActivity (your activity's parent)
      */
 
-    var airLocationActivity: AirLocationActivity? = null
-    var locationHelperCallbacks: LocationUtilCallbacks? = null
+    interface Callbacks {
+        fun beforeStart()
+        fun onComplete()
+        fun onSuccess(location: Location)
+        fun onFailed(locationFailedEnum: LocationFailedEnum)
+    }
+
     var locationCallback: LocationCallback? = null
     var fusedLocationClient: FusedLocationProviderClient? = null
-    var shouldWeRequestOptimization = true
-    var shouldWeRequestPermissions = true
 
     enum class LocationFailedEnum(val message: String, val resId: Int) {
         DeviceInFlightMode("Turn off the flight mode and try again.", R.drawable.ic_airplanemode_inactive_black_24dp),
@@ -41,26 +50,19 @@ class AirLocation(airLocationActivity: AirLocationActivity, shouldWeRequestPermi
         NoHighAccuracy("Signal is weak. Try again in some time.\n\nTip: Connect to internet for increased accuracy.", R.drawable.ic_signal_cellular_connected_no_internet_0_bar_black_24dp)
     }
 
-    interface LocationUtilCallbacks {
-        fun onSuccess(location: Location)
-        fun onFailed(locationFailedEnum: LocationFailedEnum)
-    }
-
     val REQUEST_CHECK_SETTINGS = 1234
     val REQUEST_LOCATION = 1235
 
     init {
-        this.airLocationActivity = airLocationActivity
-        this.locationHelperCallbacks = locationUtilCallbacks
-        this.shouldWeRequestOptimization = shouldWeRequestOptimization
-        this.shouldWeRequestPermissions = shouldWeRequestPermissions
+        callbacks.beforeStart()
 
         fusedLocationClient = airLocationActivity?.let { LocationServices.getFusedLocationProviderClient(it) }
         val task = fusedLocationClient?.lastLocation
 
         task?.addOnSuccessListener { location: Location? ->
             if (location != null) {
-                locationHelperCallbacks?.onSuccess(location)
+                callbacks.onComplete()
+                callbacks.onSuccess(location)
             } else {
                 onLastLocationFailed()
             }
@@ -74,7 +76,8 @@ class AirLocation(airLocationActivity: AirLocationActivity, shouldWeRequestPermi
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 locationResult ?: return
-                locationHelperCallbacks?.onSuccess(locationResult.lastLocation)
+                callbacks.onComplete()
+                callbacks.onSuccess(locationResult.lastLocation)
                 fusedLocationClient?.removeLocationUpdates(locationCallback)
             }
 
@@ -82,7 +85,7 @@ class AirLocation(airLocationActivity: AirLocationActivity, shouldWeRequestPermi
             override fun onLocationAvailability(locationAvailability: LocationAvailability?) {
                 super.onLocationAvailability(locationAvailability)
                 if (locationAvailability?.isLocationAvailable == false) {
-                    showErrorDialog(airLocationActivity as AirLocationActivity, locationHelperCallbacks as LocationUtilCallbacks, LocationFailedEnum.NoHighAccuracy)
+                    showErrorDialog(airLocationActivity as AirLocationActivity, callbacks, LocationFailedEnum.NoHighAccuracy)
                     fusedLocationClient?.removeLocationUpdates(locationCallback)
                 }
             }
@@ -90,7 +93,7 @@ class AirLocation(airLocationActivity: AirLocationActivity, shouldWeRequestPermi
 
         // check flight mode
         if (NetworkUtil.isInFlightMode(airLocationActivity as AirLocationActivity)) {
-            showErrorDialog(airLocationActivity as AirLocationActivity, locationHelperCallbacks as LocationUtilCallbacks, LocationFailedEnum.DeviceInFlightMode)
+            showErrorDialog(airLocationActivity as AirLocationActivity, callbacks, LocationFailedEnum.DeviceInFlightMode)
         } else {
             // check location permissions
             val permissions = ArrayList<String>()
@@ -109,7 +112,7 @@ class AirLocation(airLocationActivity: AirLocationActivity, shouldWeRequestPermi
                     val permissionsArgs = permissions.toTypedArray()
                     ActivityCompat.requestPermissions(airLocationActivity as AirLocationActivity, permissionsArgs, REQUEST_LOCATION)
                 } else {
-                    showErrorDialog(airLocationActivity as AirLocationActivity, locationHelperCallbacks as LocationUtilCallbacks, LocationFailedEnum.NoPermissions)
+                    showErrorDialog(airLocationActivity as AirLocationActivity, callbacks, LocationFailedEnum.NoPermissions)
                 }
             } else {
                 getLocation()
@@ -123,13 +126,9 @@ class AirLocation(airLocationActivity: AirLocationActivity, shouldWeRequestPermi
             return
         }
 
-        if (locationHelperCallbacks == null) {
-            return
-        }
-
         if (requestCode == REQUEST_LOCATION) {
             if (grandResults.isEmpty()) {
-                showErrorDialog(airLocationActivity as AirLocationActivity, locationHelperCallbacks as LocationUtilCallbacks, LocationFailedEnum.NoPermissions)
+                showErrorDialog(airLocationActivity as AirLocationActivity, callbacks, LocationFailedEnum.NoPermissions)
                 return
             }
 
@@ -143,7 +142,7 @@ class AirLocation(airLocationActivity: AirLocationActivity, shouldWeRequestPermi
             if (granted) {
                 getLocation()
             } else {
-                showErrorDialog(airLocationActivity as AirLocationActivity, locationHelperCallbacks as LocationUtilCallbacks, LocationFailedEnum.NoPermissions)
+                showErrorDialog(airLocationActivity as AirLocationActivity, callbacks, LocationFailedEnum.NoPermissions)
             }
         }
     }
@@ -174,7 +173,7 @@ class AirLocation(airLocationActivity: AirLocationActivity, shouldWeRequestPermi
                     if (shouldWeRequestOptimization) {
                         exception.startResolutionForResult(airLocationActivity, REQUEST_CHECK_SETTINGS)
                     } else {
-                        showErrorDialog(airLocationActivity as AirLocationActivity, locationHelperCallbacks as LocationUtilCallbacks, LocationFailedEnum.NoOptimizations)
+                        showErrorDialog(airLocationActivity as AirLocationActivity, callbacks, LocationFailedEnum.NoOptimizations)
                     }
                 } catch (sendEx: IntentSender.SendIntentException) {
                     // Ignore the error.
@@ -188,19 +187,15 @@ class AirLocation(airLocationActivity: AirLocationActivity, shouldWeRequestPermi
             return
         }
 
-        if (locationHelperCallbacks == null) {
-            return
-        }
-
         if (requestCode == REQUEST_CHECK_SETTINGS) {
             if (resultCode == Activity.RESULT_OK) {
                 getLocation()
             } else {
                 val locationManager = airLocationActivity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
                 if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    showErrorDialog(airLocationActivity as AirLocationActivity, locationHelperCallbacks as LocationUtilCallbacks, LocationFailedEnum.NoHighAccuracy)
+                    showErrorDialog(airLocationActivity as AirLocationActivity, callbacks, LocationFailedEnum.NoHighAccuracy)
                 } else {
-                    showErrorDialog(airLocationActivity as AirLocationActivity, locationHelperCallbacks as LocationUtilCallbacks, LocationFailedEnum.NoOptimizations)
+                    showErrorDialog(airLocationActivity as AirLocationActivity, callbacks, LocationFailedEnum.NoOptimizations)
                 }
             }
         }
@@ -210,22 +205,20 @@ class AirLocation(airLocationActivity: AirLocationActivity, shouldWeRequestPermi
 
         fun showErrorDialog(
             activity: Activity,
-            locationHelperCallbacks: LocationUtilCallbacks,
+            callbacks: Callbacks,
             locationFailedEnum: LocationFailedEnum
         ) {
-            if (AirDialog.alertDialogBuilder == null) {
-                AirDialog.show(
-                    activity,
-                    "Unable to fetch location",
-                    locationFailedEnum.message,
-                    locationFailedEnum.resId,
-                    false,
-                    AirDialog.Button("OK") {
-                        locationHelperCallbacks.onFailed(locationFailedEnum)
-                        AirDialog.alertDialogBuilder = null
-                    }
-                )
-            }
+            AirDialog.show(
+                activity,
+                "Unable to fetch location",
+                locationFailedEnum.message,
+                locationFailedEnum.resId,
+                false,
+                AirDialog.Button("OK") {
+                    callbacks.onComplete()
+                    callbacks.onFailed(locationFailedEnum)
+                }
+            )
         }
 
     }

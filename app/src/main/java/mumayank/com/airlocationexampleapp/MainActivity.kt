@@ -1,10 +1,8 @@
 package mumayank.com.airlocationexampleapp
 
 import android.location.Location
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import kotlinx.android.synthetic.main.main_activity.*
 import mumayank.com.airlocationlibrary.AirLocation
 import mumayank.com.airlocationlibrary.AirLocationActivity
@@ -18,23 +16,29 @@ class MainActivity : AirLocationActivity() {
         progressBar.visibility = View.GONE
 
         button.setOnClickListener {
-            progressBar.visibility = View.VISIBLE
-            button.visibility = View.INVISIBLE
 
-            airLocation = AirLocation(this, true, true, object: AirLocation.LocationUtilCallbacks{
-                override fun onSuccess(location: Location) {
-                    textView.text = "LONG=${location.longitude}\nLAT=${location.latitude}\n\n${textView.text}"
+            airLocation = AirLocation(this, true, true, object: AirLocation.Callbacks {
+                override fun beforeStart() {
+                    progressBar.visibility = View.VISIBLE
+                    button.visibility = View.INVISIBLE
+                }
+
+                override fun onComplete() {
                     progressBar.visibility = View.GONE
                     button.visibility = View.VISIBLE
+                }
+
+                override fun onSuccess(location: Location) {
+                    textView.text = "LONG=${location.longitude}\nLAT=${location.latitude}\n\n${textView.text}"
                 }
 
                 override fun onFailed(locationFailedEnum: AirLocation.LocationFailedEnum) {
-                    progressBar.visibility = View.GONE
-                    button.visibility = View.VISIBLE
+                    // do nothing
                 }
-            })
-        }
 
+            })
+
+        }
 
     }
 }
