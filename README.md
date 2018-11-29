@@ -8,9 +8,7 @@ An Android library which simply gets you user's most accurate current location. 
 + No need to add google play services location lib in gradle
 + Simple plug and play design.
 
-Method counts ~50
-
-Size ~50KB
+###### (method counts ~50, size ~50KB)
 
 [![](https://jitpack.io/v/mumayank/AirLocation.svg)](https://jitpack.io/#mumayank/AirLocation)
 
