@@ -16,9 +16,7 @@ An Android library which simply gets you user's most accurate current location. 
 
 + The activity in which you want to fetch location, must extend `AirLocationActivity` (FYI: AirLocationActivity extends AppCompatActivity)
 
-+ Everytime you want to fetch location, just initialize `airLocation` variable (available from parent class `AirLocationActivity`)
-
-Example:
++ Everytime you want to fetch location, just initialize `airLocation` variable (available from parent class `AirLocationActivity`). Example:
 
 ```kotlin
 airLocation = AirLocation(this, true, true, object: AirLocation.Callbacks {
