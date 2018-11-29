@@ -12,26 +12,6 @@ An Android library which simply gets you user's most accurate current location. 
 
 [![](https://jitpack.io/v/mumayank/AirLocation.svg)](https://jitpack.io/#mumayank/AirLocation)
 
-# Setup
-
-Add this line in your root build.gradle at the end of repositories:
-
-```gradle
-allprojects {
-  repositories {
-    ...
-    maven { url 'https://jitpack.io' } // this line
-  }
-}
-  ```
-Add this line in your app build.gradle:
-```gradle
-dependencies {
-  implementation 'com.github.mumayank:AirLocation:LATEST_VERSION' // this line
-}
-```
-where LATEST_VERSION is [![](https://jitpack.io/v/mumayank/AirLocation.svg)](https://jitpack.io/#mumayank/AirLocation)
-
 # Usage
 
 + The activity in which you want to fetch location, must extend `AirLocationActivity` (FYI: AirLocationActivity extends AppCompatActivity)
@@ -62,3 +42,24 @@ airLocation = AirLocation(this, true, true, object: AirLocation.Callbacks {
 ```
 
 + If you ever `override` `onActivityResult` or `onRequestPermissionsResult` functions in your activity, then you must call their respective super functions.
+
+# Setup
+
+Add this line in your root build.gradle at the end of repositories:
+
+```gradle
+allprojects {
+  repositories {
+    ...
+    maven { url 'https://jitpack.io' } // this line
+  }
+}
+  ```
+Add this line in your app build.gradle:
+```gradle
+dependencies {
+  implementation 'com.github.mumayank:AirLocation:LATEST_VERSION' // this line
+}
+```
+where LATEST_VERSION is [![](https://jitpack.io/v/mumayank/AirLocation.svg)](https://jitpack.io/#mumayank/AirLocation)
+
