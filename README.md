@@ -13,6 +13,10 @@ An Android library which simply gets you user's most precise current location vi
 
 [![](https://jitpack.io/v/mumayank/AirLocation.svg)](https://jitpack.io/#mumayank/AirLocation)
 
+# Screenshots
+
+![alt text](https://github.com/mumayank/AirLocation/blob/master/s1.png "Logo")
+
 # Usage
 
 + The activity in which you want to fetch location, must extend `AirLocationActivity` (FYI: AirLocationActivity extends AppCompatActivity)
