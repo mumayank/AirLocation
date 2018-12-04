@@ -2,11 +2,11 @@
 
 # AirLocation
 
-An Android library which simply gets you user's most accurate current location. Period.
-+ Location is accurate up to 7 decimal places (highest accuracy)
-+ No need to add any permissions in manifest
-+ No need to add google play services location lib in gradle
-+ Simple plug and play design.
+An Android library which simply gets you user's most precise current location via a callback!
++ Location is precise up to 7 decimal places (highest precision)
++ No need to add any permissions in manifest manually
++ No need to add google play services location lib in gradle manually
++ Simple plug and play design
 
 ###### (method counts ~50, size ~50KB)
 
