@@ -6,6 +6,7 @@ An Android library which simply gets you user's most precise current location vi
 + Location is precise up to 7 decimal places (highest precision)
 + No need to add any permissions in manifest manually
 + No need to add google play services location lib in gradle manually
++ Uses Google location services API internally - so you're in safe hands
 + Simple plug and play design
 
 ###### (method counts ~50, size ~50KB)
