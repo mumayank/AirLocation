@@ -84,3 +84,18 @@ dependencies {
 ```
 where LATEST_VERSION is [![](https://jitpack.io/v/mumayank/AirLocation.svg)](https://jitpack.io/#mumayank/AirLocation)
 
+# How it works?
+
+I was working on an app where I was required to fetch my app user's current location with highest precision, and accuracy.
+I looked it up on Android app development documentation where it was mentioned to use Google location services library for the same. My experience wasn't pleasant. It is difficult, complex, and painful to implement. I mean, everytime I want to fetch user's location, I have to do all those things! No way!
+
+I started looking for alternatives. I mean, why do so much of work for such a redundant task? But I couldn't find a suitable library for my use. Hence, I decided to go back to Google location services library. After days of struggle, I was finally able to make it work for all scenarios. Then it hit me - so many developers out there might be going through the same pain as I, specially junior android app developers. Shouldn't there be something as simple as a callback to get user's current location? Hence I decided to publish my work in the form of this library.
+
++ You don't have to manually add permissions in manifest as the library's manifest contains those and whenever your app builds, manifests are merged resulting in permissions getting added to your app's manifest automatically.
++ You don't have to add Google location services library in your app's gradle.build file as the library's gradle.build file contains it
++ You don't have to ask location permission or location optimization permission at runtime because the library handles that for you
++ You will simply get the location via plug and play of this library.
+
+# Future
+
+I am working on getting live location of user. Will update the library soon. Stay tuned!
