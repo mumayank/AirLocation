@@ -1,13 +1,18 @@
 package mumayank.com.airlocationexampleapp
 
+import android.content.Intent
 import android.location.Location
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.Toast
 import kotlinx.android.synthetic.main.main_activity.*
 import mumayank.com.airlocationlibrary.AirLocation
-import mumayank.com.airlocationlibrary.AirLocationActivity
 
-class MainActivity : AirLocationActivity() {
+class MainActivity : AppCompatActivity() {
+
+    // Declare your airLocation object on top
+    private var airLocation: AirLocation? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,23 +22,23 @@ class MainActivity : AirLocationActivity() {
 
         button.setOnClickListener {
 
-            airLocation = AirLocation(this, true, true, object: AirLocation.Callbacks {
-                override fun beforeStart() {
-                    progressBar.visibility = View.VISIBLE
-                    button.visibility = View.INVISIBLE
-                }
+            // Tip: As fetching location is a time consuming process,
+            // before initializing airLocation object, show a progressBar maybe
+            progressBar.visibility = View.VISIBLE
+            button.visibility = View.INVISIBLE
 
-                override fun onComplete() {
+            airLocation = AirLocation(this, true, true, object: AirLocation.Callbacks {
+                override fun onSuccess(location: Location) {
                     progressBar.visibility = View.GONE
                     button.visibility = View.VISIBLE
-                }
-
-                override fun onSuccess(location: Location) {
                     textView.text = "LONG=${location.longitude}\nLAT=${location.latitude}\n\n${textView.text}"
                 }
 
                 override fun onFailed(locationFailedEnum: AirLocation.LocationFailedEnum) {
-                    // do nothing
+                    progressBar.visibility = View.GONE
+                    button.visibility = View.VISIBLE
+                    // either do nothing, or show error which is received as locationFailedEnum
+                    Toast.makeText(this@MainActivity, locationFailedEnum.name, Toast.LENGTH_SHORT).show()
                 }
 
             })
@@ -41,4 +46,15 @@ class MainActivity : AirLocationActivity() {
         }
 
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        airLocation?.onActivityResult(requestCode, resultCode, data)
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        airLocation?.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
 }

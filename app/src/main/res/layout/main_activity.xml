@@ -16,6 +16,8 @@
         <Button
                 android:id="@+id/button"
                 android:text="Get Location"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="32dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
@@ -25,6 +27,9 @@
 
             <TextView
                     android:id="@+id/textView"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginRight="32dp"
+                    android:textColor="@android:color/black"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 
