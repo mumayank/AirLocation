@@ -16,7 +16,6 @@ import android.support.v4.content.ContextCompat
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
-import mumayank.com.airdialog.AirDialog
 import java.lang.ref.WeakReference
 import java.util.ArrayList
 
