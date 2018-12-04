@@ -15,36 +15,54 @@ An Android library which simply gets you user's most precise current location vi
 
 # Screenshots
 
-![alt text](https://github.com/mumayank/AirLocation/blob/master/s1.png "Logo")
+|   |  |
+| ------------- | ------------- |
+| ![alt text](https://github.com/mumayank/AirLocation/blob/master/s1.png "Logo")  | ![alt text](https://github.com/mumayank/AirLocation/blob/master/s2.png "Logo")  |
+| ![alt text](https://github.com/mumayank/AirLocation/blob/master/s3.png "Logo")  | ![alt text](https://github.com/mumayank/AirLocation/blob/master/s4.png "Logo")  |
+| ![alt text](https://github.com/mumayank/AirLocation/blob/master/s5.png "Logo")  | ![alt text](https://github.com/mumayank/AirLocation/blob/master/s6.png "Logo")  |
 
 # Usage
 
-+ The activity in which you want to fetch location, must extend `AirLocationActivity` (FYI: AirLocationActivity extends AppCompatActivity)
++ Declare airLocation in your activity
++ Override `onActivityResult` and call `airLocation.onActivityResult` inside it
++ Override `onRequestPermissionsResult` and call `airLocation.onRequestPermissionsResult` inside it
 
-+ Everytime you want to fetch location, just initialize `airLocation` variable (available from parent class `AirLocationActivity`). Example:
+Example:
 
 ```kotlin
+class MainActivity : AppCompatActivity() {
+
+    private var airLocation: AirLocation? = null // ADD THIS LINE ON TOP
+    
+    ...
+    
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        airLocation?.onActivityResult(requestCode, resultCode, data) // ADD THIS LINE INSIDE onActivityResult
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        airLocation?.onRequestPermissionsResult(requestCode, permissions, grantResults) // ADD THIS LINE INSIDE onRequestPermissionResult
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+    
+}
+```
+
++ Everytime you want to fetch user's current location, simply initialize `airLocation` variable:
+```kotlin
 airLocation = AirLocation(this, true, true, object: AirLocation.Callbacks {
-                override fun beforeStart() {
-                    // do something like show progress bar
-                }
-
-                override fun onComplete() {
-                    // do something like hide progress bar, as this is called on both: onSuccess and onFailure
-                }
-
                 override fun onSuccess(location: Location) {
-                    // do something like use this location
+                    // location fetched successfully, proceed with it
                 }
 
                 override fun onFailed(locationFailedEnum: AirLocation.LocationFailedEnum) {
-                    // do something if required
+                    // couldn't fetch location due to reason available in locationFailedEnum
+                    // you may optionally do something to inform the user, even though the reason may be obvious
                 }
 
             })
 ```
-
-+ If you ever `override` `onActivityResult` or `onRequestPermissionsResult` functions in your activity, then you must call their respective super functions.
 
 # Setup
 
