@@ -1,6 +1,7 @@
 ![alt text](https://github.com/mumayank/AirLocation/blob/master/image.png "Logo")
 
 # AirLocation
+[![](https://jitpack.io/v/mumayank/AirLocation.svg)](https://jitpack.io/#mumayank/AirLocation)
 
 An Android library which simply gets you user's most precise current location via a callback!
 + Location is precise up to 7 decimal places (highest precision)
@@ -11,8 +12,6 @@ An Android library which simply gets you user's most precise current location vi
 + **Full Java support**
 
 ###### (method counts ~50, size ~50KB)
-
-[![](https://jitpack.io/v/mumayank/AirLocation.svg)](https://jitpack.io/#mumayank/AirLocation)
 
 # Screenshots
 
