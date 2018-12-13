@@ -8,6 +8,7 @@ An Android library which simply gets you user's most precise current location vi
 + No need to add google play services location lib in gradle manually
 + Uses Google location services API internally - so you're in safe hands
 + Simple plug and play design
++ **Full Java support**
 
 ###### (method counts ~50, size ~50KB)
 
@@ -83,6 +84,51 @@ dependencies {
 }
 ```
 where LATEST_VERSION is [![](https://jitpack.io/v/mumayank/AirLocation.svg)](https://jitpack.io/#mumayank/AirLocation)
+
+# Java Support
+This library fully supports Java out of the box (because Kotlin is 100% interoperable)
+Hence the setup remains the same, and usage becomes:
+```java
+public class MainJavaActivity extends AppCompatActivity {
+
+    // In your activity, define this variable at top-level
+    private AirLocation airLocation;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main_java);
+
+        // Fetch location simply like this whenever you need
+        airLocation = new AirLocation(this, true, true, new AirLocation.Callbacks() {
+            @Override
+            public void onSuccess(@NotNull Location location) {
+                // do something
+            }
+
+            @Override
+            public void onFailed(@NotNull AirLocation.LocationFailedEnum locationFailedEnum) {
+                // do something
+            }
+        });
+    }
+
+    // override and call airLocation object's method by the same name
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        airLocation.onActivityResult(requestCode, resultCode, data);
+    }
+
+    // override and call airLocation object's method by the same name
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        airLocation.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+    }
+}
+```
 
 # How it works?
 
