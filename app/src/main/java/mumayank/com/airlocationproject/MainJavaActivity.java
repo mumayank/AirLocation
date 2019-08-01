@@ -1,13 +1,13 @@
-package mumayank.com.airlocationexampleapp;
+package mumayank.com.airlocationproject;
 
 import android.content.Intent;
 import android.location.Location;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import mumayank.com.airlocationlibrary.AirLocation;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MainJavaActivity extends AppCompatActivity {
 

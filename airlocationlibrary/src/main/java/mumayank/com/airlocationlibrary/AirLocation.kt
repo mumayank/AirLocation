@@ -1,6 +1,5 @@
 package mumayank.com.airlocationlibrary
 
-
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -11,8 +10,8 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.os.Looper
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task

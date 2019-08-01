@@ -1,13 +1,15 @@
-package mumayank.com.airlocationexampleapp
+package mumayank.com.airlocationproject
 
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.main_activity.*
 import mumayank.com.airlocationlibrary.AirLocation
+import mumayank.com.airlocationproject.R
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,7 +33,9 @@ class MainActivity : AppCompatActivity() {
                 override fun onSuccess(location: Location) {
                     progressBar.visibility = View.GONE
                     button.visibility = View.VISIBLE
-                    textView.text = "LONG=${location.longitude}\nLAT=${location.latitude}\n\n${textView.text}"
+                    val string = "LONG=${location.longitude}\nLAT=${location.latitude}\n\n${textView.text}"
+                    textView.text = string
+                    Log.d("airlocationlog", string)
                 }
 
                 override fun onFailed(locationFailedEnum: AirLocation.LocationFailedEnum) {
@@ -39,6 +43,7 @@ class MainActivity : AppCompatActivity() {
                     button.visibility = View.VISIBLE
                     // either do nothing, or show error which is received as locationFailedEnum
                     Toast.makeText(this@MainActivity, locationFailedEnum.name, Toast.LENGTH_SHORT).show()
+                    Log.d("airlocationlog", locationFailedEnum.name)
                 }
 
             })
