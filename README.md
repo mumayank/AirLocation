@@ -2,7 +2,6 @@
 
 # AirLocation
 [![](https://jitpack.io/v/mumayank/AirLocation.svg)](https://jitpack.io/#mumayank/AirLocation)
-<span class="badge-patreon"><a href="https://www.patreon.com/mumayank" title="Donate to this project using Patreon"><img src="https://img.shields.io/badge/patreon-donate-yellow.svg" alt="Patreon donate button" /></a></span>
 <span class="badge-paypal"><a href="https://www.paypal.me/mumayank" title="Donate to this project using Paypal"><img src="https://img.shields.io/badge/paypal-donate-yellow.svg" alt="PayPal donate button" /></a></span>
 
 An Android library which simply gets you user's most precise current location via a callback!
@@ -146,13 +145,5 @@ I started looking for alternatives. I mean, why do so much of work for such a re
 # Future
 
 I am working on getting live location of user. Will update the library soon. Stay tuned!
-
-# Support this project
-
-If this library has helped you, or if you love how this library is helping my fellow Android developers, please show your support by donating to this project:
-
-<span class="badge-patreon"><a href="https://www.patreon.com/mumayank" title="Donate to this project using Patreon"><img src="https://img.shields.io/badge/patreon-donate-yellow.svg" alt="Patreon donate button" /></a></span>
-
-<span class="badge-paypal"><a href="https://www.paypal.me/mumayank" title="Donate to this project using Paypal"><img src="https://img.shields.io/badge/paypal-donate-yellow.svg" alt="PayPal donate button" /></a></span>
 
 Thank you :)
