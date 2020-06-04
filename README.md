@@ -6,7 +6,7 @@
 [![](https://jitpack.io/v/mumayank/AirLocation.svg)](https://jitpack.io/#mumayank/AirLocation)
 <span class="badge-paypal"><a href="https://www.paypal.me/mumayank" title="Donate to this project using Paypal"><img src="https://img.shields.io/badge/paypal-donate-yellow.svg" alt="PayPal donate button" /></a></span>
 
-Android library to get user's most previce live location and its updates via a callback!
+Android library to get user's most precise live location and its updates via a callback!
 + Highest precision: The location is precise up to 7 decimal places
 + Either get user's location just one-time, or continue getting live udpates
 + No need to add any permissions in manifest manually
