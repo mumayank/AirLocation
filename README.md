@@ -7,6 +7,10 @@
 <span class="badge-paypal"><a href="https://www.paypal.me/mumayank" title="Donate to this project using Paypal"><img src="https://img.shields.io/badge/paypal-donate-yellow.svg" alt="PayPal donate button" /></a></span>
 
 Android library to get user's most precise live location and its updates via a callback!
+
+Jump to [Setup](https://github.com/mumayank/AirLocation/blob/master/README.md#setup "Setup") or [Usage](https://github.com/mumayank/AirLocation/blob/master/README.md#usage "Usage")
+
+Features:
 + Highest precision: The location is precise up to 7 decimal places
 + Either get user's location just one-time, or continue getting live udpates
 + No need to manually:
