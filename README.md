@@ -1,4 +1,5 @@
 
+
 ![alt text](https://github.com/mumayank/AirLocation/blob/master/github_assets/image.png "Logo")
 
 # AirLocation
@@ -8,14 +9,13 @@
 Android library to get user's most previce live location and its updates via a callback!
 + Highest precision: The location is precise up to 7 decimal places
 + Either get user's location just one-time, or continue getting live udpates
-+ Android 10+ compatible
 + No need to add any permissions in manifest manually
 + No need to add google play services location lib in gradle manually
 + Uses Google location services API internally - so you're in safe hands
 + Simple plug and play design
 + Extremely light weight library (~50KB
 + **Full Java support**
-
++ Android 10+ compatible (gets user's location via foreground location access, i.e., an activity that belongs to your app must be visible to the user to continue receiving location updates)
 
 # Screenshots
 
@@ -79,11 +79,11 @@ airLocation = AirLocation(activity, object: AirLocation.Callback {
     override fun aOnSuccess(locations: ArrayList<Location>) {  
         // using the given locations array list, you can easily 
         // trace the user path of the live location  
-  }  
+    }  
   
     override fun bOnFailed(locationFailedEnum: AirLocation.LocationFailedEnum) {  
         // couldn't fetch location due to reason available in locationFailedEnum
-  }  
+    }  
   
 })
 ```
@@ -93,12 +93,12 @@ airLocation = AirLocation(activity, object: AirLocation.Callback {
 airLocation = AirLocation(activity, object: AirLocation.Callback {  
   
     override fun aOnSuccess(locations: ArrayList<Location>) {  
-        // todo  
-  }  
+         
+    }  
   
     override fun bOnFailed(locationFailedEnum: AirLocation.LocationFailedEnum) {  
-        // todo  
-  }  
+        
+    }  
   
 }, true) // NOTE HERE: PASS TRUE TO JUST GET USER'S LIVE LOCATION ONCE
 ```
