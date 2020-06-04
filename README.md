@@ -4,6 +4,12 @@
 [![](https://jitpack.io/v/mumayank/AirLocation.svg)](https://jitpack.io/#mumayank/AirLocation)
 <span class="badge-paypal"><a href="https://www.paypal.me/mumayank" title="Donate to this project using Paypal"><img src="https://img.shields.io/badge/paypal-donate-yellow.svg" alt="PayPal donate button" /></a></span>
 
+Android library to get user's most previce live location and its updates via a callback!
++ Highest precision: The location is precise up to 7 decimal places
++ Either get user's location just one-time (like for setting user's current address) or continue getting live udpates (like for tracking user's movement like Google Maps)
++ Android 10+ compatible (This lib gets you user's location only when the app is in the foreground)
+
+
 An Android library which simply gets you user's most precise current location via a callback!
 + Location is precise up to 7 decimal places (highest precision)
 + No need to add any permissions in manifest manually
