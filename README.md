@@ -19,6 +19,7 @@ Android library to get user's most precise live location and its updates via a c
 + Extremely light weight library (~50KB)
 + **Written in Kotlin (with full Java support)**
 + Android 10+ compatible (gets user's location via foreground location access, i.e., an activity that belongs to your app must be visible to the user to continue receiving location updates)
++ **Import the lib, use the lib, and start receiving user's live location in under 5 mins!**
 
 # Screenshots
 
