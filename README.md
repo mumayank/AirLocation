@@ -11,9 +11,11 @@ Android library to get user's most precise live location and its updates via a c
 + Either get user's location just one-time, or continue getting live udpates
 + No need to add any permissions in manifest manually
 + No need to add google play services location lib in gradle manually
++ No need to ask runtime permissions manually
++ No need to ask location settings optimization permissions manually
 + Uses Google location services API internally - so you're in safe hands
 + Simple plug and play design
-+ Extremely light weight library (~50KB
++ Extremely light weight library (~50KB)
 + **Full Java support**
 + Android 10+ compatible (gets user's location via foreground location access, i.e., an activity that belongs to your app must be visible to the user to continue receiving location updates)
 
