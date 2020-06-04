@@ -1,46 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout
-        android:background="@android:color/white"
-        android:layout_height="match_parent"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        xmlns:android="http://schemas.android.com/apk/res/android">
+        android:layout_height="match_parent"
+        android:background="@android:color/white">
 
     <LinearLayout
-            android:id="@+id/infoLayout"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <Button
-                android:id="@+id/button"
-                android:text="Get Location"
-                android:layout_marginTop="32dp"
-                android:layout_marginBottom="32dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-        <ScrollView
+        <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
 
-            <TextView
-                    android:id="@+id/textView"
-                    android:layout_marginLeft="32dp"
-                    android:layout_marginRight="32dp"
-                    android:textColor="@android:color/black"
+            <Button
+                    android:id="@+id/button1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="Get One Time Location" />
+
+            <ScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="match_parent">
 
-        </ScrollView>
+                <TextView
+                        android:id="@+id/textView1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="32dp"
+                        android:layout_marginRight="32dp"
+                        android:textColor="@android:color/black" />
+
+            </ScrollView>
+
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/black" />
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center">
+
+                <Button
+                        android:id="@+id/button2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:text="Start Updates" />
+
+                <Button
+                        android:id="@+id/button3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:text="Stop Updates" />
+
+            </LinearLayout>
+
+            <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="32dp"
+                        android:layout_marginRight="32dp"
+                        android:textColor="@android:color/black" />
+
+            </ScrollView>
+
+        </LinearLayout>
 
     </LinearLayout>
 
     <ProgressBar
             android:id="@+id/progressBar"
-            android:layout_gravity="center"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
 
 </FrameLayout>
