@@ -54,9 +54,10 @@ where LATEST_VERSION is [![](https://jitpack.io/v/mumayank/AirLocation.svg)](htt
 
 # Usage
 
-+ Declare airLocation in your activity
-+ Override `onActivityResult` and call `airLocation.onActivityResult` inside it
-+ Override `onRequestPermissionsResult` and call `airLocation.onRequestPermissionsResult` inside it
+1. Declare `airLocation` variable in the Activity
+2. Override `onActivityResult` and call `airLocation.onActivityResult` inside it
+3. Override `onRequestPermissionsResult` and call `airLocation.onRequestPermissionsResult` inside it
+4. When you want to receive user's live location updates, simply initialize `airLocation` variable
 
 Example:
 
