@@ -13,7 +13,7 @@ Jump to [Setup](https://github.com/mumayank/AirLocation/blob/master/README.md#se
 Features:
 + Highest precision: The location is precise up to 7 decimal places
 + Either get user's location just one-time, or continue getting live udpates
-+ No need to manually:
++ No need to manually: (the lib takes care of these)
     + add any permissions in manifest
     + add google play services location lib in gradle
     + ask runtime permissions
