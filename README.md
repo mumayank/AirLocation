@@ -1,3 +1,4 @@
+
 ![alt text](https://github.com/mumayank/AirLocation/blob/master/github_assets/image.png "Logo")
 
 # AirLocation
@@ -6,27 +7,42 @@
 
 Android library to get user's most previce live location and its updates via a callback!
 + Highest precision: The location is precise up to 7 decimal places
-+ Either get user's location just one-time (like for setting user's current address) or continue getting live udpates (like for tracking user's movement like Google Maps)
-+ Android 10+ compatible (This lib gets you user's location only when the app is in the foreground)
-
-
-An Android library which simply gets you user's most precise current location via a callback!
-+ Location is precise up to 7 decimal places (highest precision)
++ Either get user's location just one-time, or continue getting live udpates
++ Android 10+ compatible
 + No need to add any permissions in manifest manually
 + No need to add google play services location lib in gradle manually
 + Uses Google location services API internally - so you're in safe hands
 + Simple plug and play design
++ Extremely light weight library (~50KB
 + **Full Java support**
 
-###### (method counts ~50, size ~50KB)
 
 # Screenshots
 
 |   |  |
 | ------------- | ------------- |
 | ![alt text](https://github.com/mumayank/AirLocation/blob/master/github_assets/s1.png "Logo")  | ![alt text](https://github.com/mumayank/AirLocation/blob/master/github_assets/s2.png "Logo")  |
-| ![alt text](https://github.com/mumayank/AirLocation/blob/master/github_assets/s3.png "Logo")  | ![alt text](https://github.com/mumayank/AirLocation/blob/master/github_assets/s4.png "Logo")  |
-| ![alt text](https://github.com/mumayank/AirLocation/blob/master/github_assets/s5.png "Logo")  | ![alt text](https://github.com/mumayank/AirLocation/blob/master/github_assets/s6.png "Logo")  |
+| ![alt text](https://github.com/mumayank/AirLocation/blob/master/github_assets/s3.png "Logo")    |
+
+# Setup
+
+Add this line in your root build.gradle at the end of repositories:
+
+```gradle
+allprojects {
+  repositories {
+    ...
+    maven { url 'https://jitpack.io' } // this line
+  }
+}
+  ```
+Add this line in your app build.gradle:
+```gradle
+dependencies {
+  implementation 'com.github.mumayank:AirLocation:LATEST_VERSION' // this line
+}
+```
+where LATEST_VERSION is [![](https://jitpack.io/v/mumayank/AirLocation.svg)](https://jitpack.io/#mumayank/AirLocation)
 
 # Usage
 
@@ -56,84 +72,35 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
-+ Everytime you want to fetch user's current location, simply initialize `airLocation` variable:
++ When you  want to start receiving user's live location udpates, simply initialize `airlocation` variable:
 ```kotlin
-airLocation = AirLocation(this, true, true, object: AirLocation.Callbacks {
-                override fun onSuccess(location: Location) {
-                    // location fetched successfully, proceed with it
-                }
-
-                override fun onFailed(locationFailedEnum: AirLocation.LocationFailedEnum) {
-                    // couldn't fetch location due to reason available in locationFailedEnum
-                    // you may optionally do something to inform the user, even though the reason may be obvious
-                }
-
-            })
+airLocation = AirLocation(activity, object: AirLocation.Callback {  
+      
+    override fun aOnSuccess(locations: ArrayList<Location>) {  
+        // using the given locations array list, you can easily 
+        // trace the user path of the live location  
+  }  
+  
+    override fun bOnFailed(locationFailedEnum: AirLocation.LocationFailedEnum) {  
+        // couldn't fetch location due to reason available in locationFailedEnum
+  }  
+  
+})
 ```
 
-# Setup
-
-Add this line in your root build.gradle at the end of repositories:
-
-```gradle
-allprojects {
-  repositories {
-    ...
-    maven { url 'https://jitpack.io' } // this line
-  }
-}
-  ```
-Add this line in your app build.gradle:
-```gradle
-dependencies {
-  implementation 'com.github.mumayank:AirLocation:LATEST_VERSION' // this line
-}
-```
-where LATEST_VERSION is [![](https://jitpack.io/v/mumayank/AirLocation.svg)](https://jitpack.io/#mumayank/AirLocation)
-
-# Java Support
-This library fully supports Java out of the box (because Kotlin is 100% interoperable)
-Hence the setup remains the same, and usage becomes:
-```java
-public class MainJavaActivity extends AppCompatActivity {
-
-    // In your activity, define this variable at top-level
-    private AirLocation airLocation;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_java);
-
-        // Fetch location simply like this whenever you need
-        airLocation = new AirLocation(this, true, true, new AirLocation.Callbacks() {
-            @Override
-            public void onSuccess(@NotNull Location location) {
-                // do something
-            }
-
-            @Override
-            public void onFailed(@NotNull AirLocation.LocationFailedEnum locationFailedEnum) {
-                // do something
-            }
-        });
-    }
-
-    // override and call airLocation object's method by the same name
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        airLocation.onActivityResult(requestCode, resultCode, data);
-    }
-
-    // override and call airLocation object's method by the same name
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        airLocation.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-    }
-}
++ In some cases, you'd want to just get user's live location once. In such a case, simply pass `true` as the value of the parameter `isLocationRequiredOnlyOneTime`:
+```kotlin
+airLocation = AirLocation(activity, object: AirLocation.Callback {  
+  
+    override fun aOnSuccess(locations: ArrayList<Location>) {  
+        // todo  
+  }  
+  
+    override fun bOnFailed(locationFailedEnum: AirLocation.LocationFailedEnum) {  
+        // todo  
+  }  
+  
+}, true) // NOTE HERE: PASS TRUE TO JUST GET USER'S LIVE LOCATION ONCE
 ```
 
 # How it works?
@@ -150,6 +117,6 @@ I started looking for alternatives. I mean, why do so much of work for such a re
 
 # Future
 
-I am working on getting live location of user. Will update the library soon. Stay tuned!
+The library is in active development. Please post your feature requests/ pull requests/ bug reports in the appropriate section of this repositories.
 
 Thank you :)
