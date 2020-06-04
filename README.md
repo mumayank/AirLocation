@@ -9,10 +9,11 @@
 Android library to get user's most precise live location and its updates via a callback!
 + Highest precision: The location is precise up to 7 decimal places
 + Either get user's location just one-time, or continue getting live udpates
-+ No need to add any permissions in manifest manually
-+ No need to add google play services location lib in gradle manually
-+ No need to ask runtime permissions manually
-+ No need to ask location settings optimization permissions manually
++ No need to manually:
+    + add any permissions in manifest
+    + add google play services location lib in gradle
+    + ask runtime permissions
+    + ask location settings optimization permissions
 + Uses Google location services API internally - so you're in safe hands
 + Simple plug and play design
 + Extremely light weight library (~50KB)
