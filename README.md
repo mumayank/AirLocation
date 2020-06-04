@@ -21,8 +21,8 @@ Android library to get user's most previce live location and its updates via a c
 
 |   |  |
 | ------------- | ------------- |
-| ![alt text](https://github.com/mumayank/AirLocation/blob/master/github_assets/s4.jpg?s=200 "Logo")  | ![alt text](https://github.com/mumayank/AirLocation/blob/master/github_assets/s2.png?s=200 "Logo")  |
-| ![alt text](https://github.com/mumayank/AirLocation/blob/master/github_assets/s3.png?s=200 "Logo")    |
+| <img src="https://github.com/mumayank/AirLocation/blob/master/github_assets/s1.png" width="500">  | <img src="https://github.com/mumayank/AirLocation/blob/master/github_assets/s2.png" width="500">  |
+| <img src="https://github.com/mumayank/AirLocation/blob/master/github_assets/s3.png" width="500">    | 
 
 # Setup
 
