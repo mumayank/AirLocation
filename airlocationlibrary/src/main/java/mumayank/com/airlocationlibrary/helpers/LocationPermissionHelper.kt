@@ -23,12 +23,17 @@ class LocationPermissionHelper(
             return
         }
 
-        if (isPermissionListGranted(activity, getPermissionList())) {
+        if (permissionList.all {
+                ContextCompat.checkSelfPermission(
+                    activity,
+                    it
+                ) == PackageManager.PERMISSION_GRANTED
+            }) {
             onSuccess?.invoke()
         } else {
             ActivityCompat.requestPermissions(
                 activityWeakReference.get() as Activity,
-                getPermissionList().toTypedArray(),
+                permissionList.toTypedArray(),
                 REQUEST_CODE
             )
         }
@@ -50,19 +55,20 @@ class LocationPermissionHelper(
                     return
                 }
 
-                var granted = true
-                for (grantResult in grantResults) {
-                    if (grantResult != PackageManager.PERMISSION_GRANTED) {
-                        granted = false
-                        break
-                    }
-                }
-
-                if (granted) {
+                if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
                     onSuccess?.invoke()
                 } else {
-                    if (isAnyPermissionPermanentlyDisabled(activity, getPermissionList())) {
-                        openAppPermissionSettings(activity, toastTextWhenOpenAppSettingsIfPermissionsPermanentlyDenied)
+                    if (permissionList.any {
+                            (ContextCompat.checkSelfPermission(activity, it)
+                                    != PackageManager.PERMISSION_GRANTED)
+                                    && (ActivityCompat.shouldShowRequestPermissionRationale(
+                                activity, it
+                            ).not())
+                        }) {
+                        openAppPermissionSettings(
+                            activity,
+                            toastTextWhenOpenAppSettingsIfPermissionsPermanentlyDenied
+                        )
                     } else {
                         // intentonally ignored because no need to additionally also open settings page
                         // as user hasn't permanently disabled the settings yet
@@ -78,52 +84,15 @@ class LocationPermissionHelper(
 
         private const val REQUEST_CODE = 1236
 
-        private fun getPermissionList(): ArrayList<String> {
-            val permissions = ArrayList<String>()
-            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
-            permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION)
-            return permissions
-        }
+        private val permissionList = arrayListOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
 
-        private fun isPermissionListGranted(
+        private fun openAppPermissionSettings(
             activity: Activity,
-            permissions: ArrayList<String>
-        ): Boolean {
-            var isGranted = true
-            for (permission in permissions) {
-                val isThisPermissionGranted = ContextCompat.checkSelfPermission(
-                    activity,
-                    permission
-                ) == PackageManager.PERMISSION_GRANTED
-                if (isThisPermissionGranted.not()) {
-                    isGranted = false
-                    break
-                }
-            }
-            return isGranted
-        }
-
-        private fun isAnyPermissionPermanentlyDisabled(
-            activity: Activity,
-            permissions: ArrayList<String>
-        ): Boolean {
-            var isPermanentlyDisabled = false
-            for (permission in permissions) {
-                val isPermissionNotGranted = ContextCompat.checkSelfPermission(
-                    activity,
-                    permission
-                ) != PackageManager.PERMISSION_GRANTED
-                val isPermissionPermanentlyDisabled =
-                    ActivityCompat.shouldShowRequestPermissionRationale(activity, permission).not()
-                if (isPermissionNotGranted && isPermissionPermanentlyDisabled) {
-                    isPermanentlyDisabled = true
-                    break
-                }
-            }
-            return isPermanentlyDisabled
-        }
-
-        private fun openAppPermissionSettings(activity: Activity, toastTextWhenOpenAppSettingsIfPermissionsPermanentlyDenied: String) {
+            toastTextWhenOpenAppSettingsIfPermissionsPermanentlyDenied: String
+        ) {
             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
             intent.data = Uri.fromParts("package", activity.packageName, null)
             activity.startActivity(intent)

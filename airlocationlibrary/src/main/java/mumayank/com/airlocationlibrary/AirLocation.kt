@@ -1,5 +1,6 @@
 package mumayank.com.airlocationlibrary
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
@@ -11,6 +12,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import com.google.android.gms.location.*
 import mumayank.com.airlocationlibrary.helpers.*
+import mumayank.com.airpermissions.AirPermissions
 import java.io.Serializable
 import java.lang.ref.WeakReference
 
@@ -29,7 +31,6 @@ class AirLocation(
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private var isStartCalled = false
-    private var isStopLocationUpdateRequested = false
 
     private val activityWeakReference = WeakReference(activity)
 
@@ -47,19 +48,14 @@ class AirLocation(
         callback?.onFailure(LocationFailedEnum.GOOGLE_PLAY_API_NOT_AVAILABLE)
     })
 
-    private val locationPermissionHelper = LocationPermissionHelper(activity, activityWeakReference, fun() {
-        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
-            return
-        }
-
+    private val airPermissions = AirPermissions(activity, arrayOf(
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    ), fun() {
         checkIfInFlightMode()
     }, fun() {
-        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
-            return
-        }
-
         callback?.onFailure(LocationFailedEnum.LOCATION_PERMISSION_NOT_GRANTED)
-    }, toastTextWhenOpenAppSettingsIfPermissionsPermanentlyDenied)
+    })
 
     private val locationOptimizationPermissionHelper = LocationOptimizationPermissionHelper(
         activity,
@@ -104,7 +100,6 @@ class AirLocation(
         }
 
         isStartCalled = true
-        isStopLocationUpdateRequested = false
         makeGooglePlayApiAvailable()
     }
 
@@ -121,7 +116,7 @@ class AirLocation(
             return
         }
 
-        locationPermissionHelper.getPermissions()
+        airPermissions.request()
     }
 
     private fun checkIfInFlightMode() {
@@ -185,9 +180,7 @@ class AirLocation(
                     return
                 }
 
-                if (isStopLocationUpdateRequested.not()) {
-                    requestLocationUpdates()
-                }
+                requestLocationUpdates()
             }
 
             @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
@@ -251,7 +244,7 @@ class AirLocation(
             return
         }
 
-        locationPermissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        airPermissions.onRequestPermissionsResult(requestCode)
     }
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -263,21 +256,9 @@ class AirLocation(
             return
         }
 
+        airPermissions.onActivityResult(requestCode)
         locationOptimizationPermissionHelper.onActivityResult(requestCode, resultCode, data)
         googlePlayApiHelper.onActivityResult(requestCode, resultCode, data)
-    }
-
-    fun stopLocationUpdates() {
-        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
-            return
-        }
-
-        if (isStartCalled.not()) {
-            return
-        }
-
-        isStopLocationUpdateRequested = true
-        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
 }
