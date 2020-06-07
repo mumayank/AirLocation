@@ -89,12 +89,12 @@ Example:
         }
 
         override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-            airLocation?.onActivityResult(requestCode, resultCode, data) // ADD THIS LINE INSIDE onActivityResult
+            airLocation.onActivityResult(requestCode, resultCode, data) // ADD THIS LINE INSIDE onActivityResult
             super.onActivityResult(requestCode, resultCode, data)
         }
 
         override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-            airLocation?.onRequestPermissionsResult(requestCode, permissions, grantResults) // ADD THIS LINE INSIDE onRequestPermissionResult
+            airLocation.onRequestPermissionsResult(requestCode, permissions, grantResults) // ADD THIS LINE INSIDE onRequestPermissionResult
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
 
