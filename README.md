@@ -1,9 +1,3 @@
-
-
-
-
-![alt text](https://github.com/mumayank/AirLocation/blob/master/github_assets/image.png "Logo")
-
 # AirLocation
 [![](https://jitpack.io/v/mumayank/AirLocation.svg)](https://jitpack.io/#mumayank/AirLocation)
 <span class="badge-paypal"><a href="https://www.paypal.me/mumayank" title="Donate to this project using Paypal"><img src="https://img.shields.io/badge/paypal-donate-yellow.svg" alt="PayPal donate button" /></a></span>
@@ -12,6 +6,8 @@
 An android library to simplify the usage of Google Play services location APIs, to get the user's most precise live location via a callback!
 
 Jump to [Setup](https://github.com/mumayank/AirLocation/blob/master/README.md#setup "Setup") or [Usage](https://github.com/mumayank/AirLocation/blob/master/README.md#usage "Usage")
+
+![alt text](https://github.com/mumayank/AirLocation/blob/master/github_assets/image.png "Logo")
 
 Features:
 + The location is precise up to 7 decimal places
@@ -52,12 +48,12 @@ Add this line in your root build.gradle at the end of repositories:
         maven { url 'https://jitpack.io' } // this line
       }
     }
-  ```
+```
 Add this line in your app build.gradle:
 ```gradle
-	dependencies {
-	  implementation 'com.github.mumayank:AirLocation:LATEST_VERSION' // this line
-	}
+    dependencies {
+      implementation 'com.github.mumayank:AirLocation:LATEST_VERSION' // this line
+    }
 ```
 where LATEST_VERSION is [![](https://jitpack.io/v/mumayank/AirLocation.svg)](https://jitpack.io/#mumayank/AirLocation)
 
@@ -72,44 +68,44 @@ where LATEST_VERSION is [![](https://jitpack.io/v/mumayank/AirLocation.svg)](htt
 Example:
 ```kotlin
     class MainActivity : AppCompatActivity() {
-    
+
         private val airLocation = AirLocation(this, object : AirLocation.Callback {  
-    	
-    	    override fun onSuccess(locations: ArrayList<Location>) {  
-    	        // do something 
-    	        // the entire track is sent in locations
-    	    }  
-    	  
-    	    override fun onFailure(locationFailedEnum: AirLocation.LocationFailedEnum) {  
-    	        // do something 
-    	        // the reason for failure is given in locationFailedEnum
-    	    }  
-    		
-    	})
-    	
-    	override fun onCreate(savedInstanceState: Bundle?) {
-    		...
-    		airLocation.start() // CALL .start() WHEN YOU ARE READY TO RECEIVE LOCATION UPDATES
-    	}
-        
+
+            override fun onSuccess(locations: ArrayList<Location>) {  
+                // do something 
+                // the entire track is sent in locations
+            }  
+
+            override fun onFailure(locationFailedEnum: AirLocation.LocationFailedEnum) {  
+                // do something 
+                // the reason for failure is given in locationFailedEnum
+            }  
+
+        })
+
+        override fun onCreate(savedInstanceState: Bundle?) {
+            ...
+            airLocation.start() // CALL .start() WHEN YOU ARE READY TO RECEIVE LOCATION UPDATES
+        }
+
         override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
             airLocation?.onActivityResult(requestCode, resultCode, data) // ADD THIS LINE INSIDE onActivityResult
             super.onActivityResult(requestCode, resultCode, data)
         }
-    
+
         override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
             airLocation?.onRequestPermissionsResult(requestCode, permissions, grantResults) // ADD THIS LINE INSIDE onRequestPermissionResult
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
-        
+
     }
 ```
 + In some cases, you'd want to just get user's live location once. In such a case, simply pass `true` as the value of the parameter `isLocationRequiredOnlyOneTime`:
 ```kotlin
-	private val airLocation = AirLocation(this, object : AirLocation.Callback {  
-	    override fun onSuccess(locations: ArrayList<Location>) {  }  
-	    override fun onFailure(locationFailedEnum: AirLocation.LocationFailedEnum) {  }  
-	}, true) // NOTE HERE: PASS true TO JUST GET USER'S LIVE LOCATION ONCE
+    private val airLocation = AirLocation(this, object : AirLocation.Callback {  
+        override fun onSuccess(locations: ArrayList<Location>) {  }  
+        override fun onFailure(locationFailedEnum: AirLocation.LocationFailedEnum) {  }  
+    }, true) // NOTE HERE: PASS true TO JUST GET USER'S LIVE LOCATION ONCE
 ```
 
 ## Thank you!
