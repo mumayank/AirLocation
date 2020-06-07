@@ -1,28 +1,36 @@
 
+
 ![alt text](https://github.com/mumayank/AirLocation/blob/master/github_assets/image.png "Logo")
 
 # AirLocation
 [![](https://jitpack.io/v/mumayank/AirLocation.svg)](https://jitpack.io/#mumayank/AirLocation)
 <span class="badge-paypal"><a href="https://www.paypal.me/mumayank" title="Donate to this project using Paypal"><img src="https://img.shields.io/badge/paypal-donate-yellow.svg" alt="PayPal donate button" /></a></span>
 
-Android library to get user's most previce live location and its updates via a callback!
+Android library to get user's most precise live location and its updates via a callback!
+
+Jump to [Setup](https://github.com/mumayank/AirLocation/blob/master/README.md#setup "Setup") or [Usage](https://github.com/mumayank/AirLocation/blob/master/README.md#usage "Usage")
+
+Features:
 + Highest precision: The location is precise up to 7 decimal places
 + Either get user's location just one-time, or continue getting live udpates
-+ Android 10+ compatible
-+ No need to add any permissions in manifest manually
-+ No need to add google play services location lib in gradle manually
++ No need to manually: (the lib takes care of these)
+    + add any permissions in manifest
+    + add google play services location lib in gradle
+    + ask runtime permissions
+    + ask location settings optimization permissions
 + Uses Google location services API internally - so you're in safe hands
 + Simple plug and play design
-+ Extremely light weight library (~50KB
-+ **Full Java support**
-
++ Extremely light weight library (~50KB)
++ **Written in Kotlin (with full Java support)**
++ Android 10+ compatible (gets user's location via foreground location access, i.e., an activity that belongs to your app must be visible to the user to continue receiving location updates)
++ **Import the lib, use the lib, and start receiving user's live location in under 5 mins!**
 
 # Screenshots
 
 |   |  |
 | ------------- | ------------- |
-| ![alt text](https://github.com/mumayank/AirLocation/blob/master/github_assets/s1.png "Logo")  | ![alt text](https://github.com/mumayank/AirLocation/blob/master/github_assets/s2.png "Logo")  |
-| ![alt text](https://github.com/mumayank/AirLocation/blob/master/github_assets/s3.png "Logo")    |
+| <img src="https://github.com/mumayank/AirLocation/blob/master/github_assets/s1.png" width="300">  | <img src="https://github.com/mumayank/AirLocation/blob/master/github_assets/s2.png" width="300">  |
+| <img src="https://github.com/mumayank/AirLocation/blob/master/github_assets/s3.png" width="300">    | 
 
 # Setup
 
@@ -46,9 +54,10 @@ where LATEST_VERSION is [![](https://jitpack.io/v/mumayank/AirLocation.svg)](htt
 
 # Usage
 
-+ Declare airLocation in your activity
-+ Override `onActivityResult` and call `airLocation.onActivityResult` inside it
-+ Override `onRequestPermissionsResult` and call `airLocation.onRequestPermissionsResult` inside it
+1. Declare `airLocation` variable in the Activity
+2. Override `onActivityResult` and call `airLocation.onActivityResult` inside it
+3. Override `onRequestPermissionsResult` and call `airLocation.onRequestPermissionsResult` inside it
+4. When you want to receive user's live location updates, simply initialize `airLocation` variable
 
 Example:
 
@@ -79,11 +88,11 @@ airLocation = AirLocation(activity, object: AirLocation.Callback {
     override fun aOnSuccess(locations: ArrayList<Location>) {  
         // using the given locations array list, you can easily 
         // trace the user path of the live location  
-  }  
+    }  
   
     override fun bOnFailed(locationFailedEnum: AirLocation.LocationFailedEnum) {  
         // couldn't fetch location due to reason available in locationFailedEnum
-  }  
+    }  
   
 })
 ```
@@ -93,12 +102,12 @@ airLocation = AirLocation(activity, object: AirLocation.Callback {
 airLocation = AirLocation(activity, object: AirLocation.Callback {  
   
     override fun aOnSuccess(locations: ArrayList<Location>) {  
-        // todo  
-  }  
+         
+    }  
   
     override fun bOnFailed(locationFailedEnum: AirLocation.LocationFailedEnum) {  
-        // todo  
-  }  
+        
+    }  
   
 }, true) // NOTE HERE: PASS TRUE TO JUST GET USER'S LIVE LOCATION ONCE
 ```
