@@ -1,6 +1,7 @@
 
 
 
+
 ![alt text](https://github.com/mumayank/AirLocation/blob/master/github_assets/image.png "Logo")
 
 # AirLocation
@@ -45,18 +46,18 @@ Features:
 Add this line in your root build.gradle at the end of repositories:
 
 ```gradle
-allprojects {
-  repositories {
-    ...
-    maven { url 'https://jitpack.io' } // this line
-  }
-}
+    allprojects {
+      repositories {
+        ...
+        maven { url 'https://jitpack.io' } // this line
+      }
+    }
   ```
 Add this line in your app build.gradle:
 ```gradle
-dependencies {
-  implementation 'com.github.mumayank:AirLocation:LATEST_VERSION' // this line
-}
+	dependencies {
+	  implementation 'com.github.mumayank:AirLocation:LATEST_VERSION' // this line
+	}
 ```
 where LATEST_VERSION is [![](https://jitpack.io/v/mumayank/AirLocation.svg)](https://jitpack.io/#mumayank/AirLocation)
 
@@ -69,48 +70,46 @@ where LATEST_VERSION is [![](https://jitpack.io/v/mumayank/AirLocation.svg)](htt
 5. (Optional) To stop receiving the live location, call `airLocation.stopLocationUpdates()`
 
 Example:
-
 ```kotlin
-class MainActivity : AppCompatActivity() {
-
-    private val airLocation = AirLocation(this, object : AirLocation.Callback {  
-	
-	    override fun onSuccess(locations: ArrayList<Location>) {  
-	        // do something 
-	        // the entire track is sent in locations
-	    }  
-	  
-	    override fun onFailure(locationFailedEnum: AirLocation.LocationFailedEnum) {  
-	        // do something 
-	        // the reason for failure is given in locationFailedEnum
-	    }  
-		
-	})
-	
-	override fun onCreate(savedInstanceState: Bundle?) {
-		...
-		airLocation.start() // CALL .start() WHEN YOU ARE READY TO RECEIVE LOCATION UPDATES
-	}
+    class MainActivity : AppCompatActivity() {
     
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        airLocation?.onActivityResult(requestCode, resultCode, data) // ADD THIS LINE INSIDE onActivityResult
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        airLocation?.onRequestPermissionsResult(requestCode, permissions, grantResults) // ADD THIS LINE INSIDE onRequestPermissionResult
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
+        private val airLocation = AirLocation(this, object : AirLocation.Callback {  
+    	
+    	    override fun onSuccess(locations: ArrayList<Location>) {  
+    	        // do something 
+    	        // the entire track is sent in locations
+    	    }  
+    	  
+    	    override fun onFailure(locationFailedEnum: AirLocation.LocationFailedEnum) {  
+    	        // do something 
+    	        // the reason for failure is given in locationFailedEnum
+    	    }  
+    		
+    	})
+    	
+    	override fun onCreate(savedInstanceState: Bundle?) {
+    		...
+    		airLocation.start() // CALL .start() WHEN YOU ARE READY TO RECEIVE LOCATION UPDATES
+    	}
+        
+        override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+            airLocation?.onActivityResult(requestCode, resultCode, data) // ADD THIS LINE INSIDE onActivityResult
+            super.onActivityResult(requestCode, resultCode, data)
+        }
     
-}
+        override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+            airLocation?.onRequestPermissionsResult(requestCode, permissions, grantResults) // ADD THIS LINE INSIDE onRequestPermissionResult
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+        
+    }
 ```
-
 + In some cases, you'd want to just get user's live location once. In such a case, simply pass `true` as the value of the parameter `isLocationRequiredOnlyOneTime`:
 ```kotlin
-private val airLocation = AirLocation(this, object : AirLocation.Callback {  
-    override fun onSuccess(locations: ArrayList<Location>) {  }  
-    override fun onFailure(locationFailedEnum: AirLocation.LocationFailedEnum) {  }  
-}, true) // NOTE HERE: PASS true TO JUST GET USER'S LIVE LOCATION ONCE
+	private val airLocation = AirLocation(this, object : AirLocation.Callback {  
+	    override fun onSuccess(locations: ArrayList<Location>) {  }  
+	    override fun onFailure(locationFailedEnum: AirLocation.LocationFailedEnum) {  }  
+	}, true) // NOTE HERE: PASS true TO JUST GET USER'S LIVE LOCATION ONCE
 ```
 
 ## Thank you!
