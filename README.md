@@ -1,29 +1,37 @@
 
 
+
 ![alt text](https://github.com/mumayank/AirLocation/blob/master/github_assets/image.png "Logo")
 
 # AirLocation
 [![](https://jitpack.io/v/mumayank/AirLocation.svg)](https://jitpack.io/#mumayank/AirLocation)
 <span class="badge-paypal"><a href="https://www.paypal.me/mumayank" title="Donate to this project using Paypal"><img src="https://img.shields.io/badge/paypal-donate-yellow.svg" alt="PayPal donate button" /></a></span>
+<a href="http://developer.android.com/index.html" target="_blank"><img src="https://img.shields.io/badge/platform-android-green.svg"/></a> <a href="https://android-arsenal.com/api?level=17" target="_blank"><img src="https://img.shields.io/badge/API-17%2B-green.svg?style=flat"/></a> 
 
-Android library to get user's most precise live location and its updates via a callback!
+An android library to simplify the usage of Google Play services location APIs, to get user's most precise live location via a callback!
 
 Jump to [Setup](https://github.com/mumayank/AirLocation/blob/master/README.md#setup "Setup") or [Usage](https://github.com/mumayank/AirLocation/blob/master/README.md#usage "Usage")
 
 Features:
-+ Highest precision: The location is precise up to 7 decimal places
-+ Either get user's location just one-time, or continue getting live udpates
-+ No need to manually: (the lib takes care of these)
-    + add any permissions in manifest
-    + add google play services location lib in gradle
-    + ask runtime permissions
-    + ask location settings optimization permissions
-+ Uses Google location services API internally - so you're in safe hands
++ The location is precise up to 7 decimal places
++ Choose to get user's location just one-time, or continue getting live udpates
++ The library takes care of a host of redundant checks and tasks like:
+	+ Declaring the location permissions in the Manifest file
+	+ Adding the Google Play services location APIs library dependency in Gradle
+	+ Checking if Google Play services are available and up to date or not.
+		+ If not, requesting the user to update it, along with providing an option to do so.
+	+ Checking if location permissions are available or not. 
+		+ If not, requesting the user at runtime to grant the permissions. 
+		+ Also checking if the permissions are permanently disabled by the user.
+			+ If so, taking the user to the app's settings page and requesting to manually grant the permissions.
+	+ Checking if the device hardware settings are optimized or not (GPS is on, Wifi is on, etc)
+		+ If not, requesting the user to grant permission to change settings.
++ Uses only Google Play services location APIs internally - so you're in safe hands
 + Simple plug and play design
 + Extremely light weight library (~50KB)
 + **Written in Kotlin (with full Java support)**
-+ Android 10+ compatible (gets user's location via foreground location access, i.e., an activity that belongs to your app must be visible to the user to continue receiving location updates)
-+ **Import the lib, use the lib, and start receiving user's live location in under 5 mins!**
++ Android 10+ compatible (gets user's location via foreground location access, i.e., the activity requesting the location must be visible to the user to continue receiving location updates)
++ Takes care of the activity lifecycle
 
 # Screenshots
 
@@ -54,17 +62,33 @@ where LATEST_VERSION is [![](https://jitpack.io/v/mumayank/AirLocation.svg)](htt
 
 # Usage
 
-1. Declare `airLocation` variable in the Activity
-2. Override `onActivityResult` and call `airLocation.onActivityResult` inside it
-3. Override `onRequestPermissionsResult` and call `airLocation.onRequestPermissionsResult` inside it
-4. When you want to receive user's live location updates, simply initialize `airLocation` variable
+1. Define `airLocation`
+2. To start receiving live location, call `airLocation.start()`
+3. Override `onActivityResult` and call `airLocation.onActivityResult()`
+4. Override `onRequestPermissionsResult` and call `airLocation.onRequestPermissionsResult()`
+5. (Optional) To stop receiving the live location, call `airLocation.stopLocationUpdates()`
 
 Example:
 
 ```kotlin
 class MainActivity : AppCompatActivity() {
 
-    private var airLocation: AirLocation? = null // ADD THIS LINE ON TOP
+    private val airLocation = AirLocation(this, object : AirLocation.Callback {  
+	    override fun onSuccess(locations: ArrayList<Location>) {  
+	        // do something 
+	        // the entire track is sent in locations
+	    }  
+	  
+	    override fun onFailure(locationFailedEnum: AirLocation.LocationFailedEnum) {  
+	        // do something 
+	        // the reason for failure is given in locationFailedEnum
+	    }  
+	})
+
+	override fun onCreate(savedInstanceState: Bundle?) {  
+	    ...
+	    airLocation.start() // CALL .start() WHEN YOU ARE READY TO RECEIVE LOCATION UPDATES
+    }
     
     ...
     
@@ -81,51 +105,17 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
-+ When you  want to start receiving user's live location udpates, simply initialize `airlocation` variable:
-```kotlin
-airLocation = AirLocation(activity, object: AirLocation.Callback {  
-      
-    override fun aOnSuccess(locations: ArrayList<Location>) {  
-        // using the given locations array list, you can easily 
-        // trace the user path of the live location  
-    }  
-  
-    override fun bOnFailed(locationFailedEnum: AirLocation.LocationFailedEnum) {  
-        // couldn't fetch location due to reason available in locationFailedEnum
-    }  
-  
-})
-```
-
 + In some cases, you'd want to just get user's live location once. In such a case, simply pass `true` as the value of the parameter `isLocationRequiredOnlyOneTime`:
 ```kotlin
-airLocation = AirLocation(activity, object: AirLocation.Callback {  
-  
-    override fun aOnSuccess(locations: ArrayList<Location>) {  
-         
-    }  
-  
-    override fun bOnFailed(locationFailedEnum: AirLocation.LocationFailedEnum) {  
-        
-    }  
-  
-}, true) // NOTE HERE: PASS TRUE TO JUST GET USER'S LIVE LOCATION ONCE
+private val airLocation = AirLocation(this, object : AirLocation.Callback {  
+    override fun onSuccess(locations: ArrayList<Location>) {  }  
+    override fun onFailure(locationFailedEnum: AirLocation.LocationFailedEnum) {  }  
+}, true) // NOTE HERE: PASS true TO JUST GET USER'S LIVE LOCATION ONCE
 ```
 
-# How it works?
+## Thank you!
+If you love the library, or it has helped you in any way, please give it a star! I'd really appreciate it!
 
-I was working on an app where I was required to fetch my app user's current location with highest precision, and accuracy.
-I looked it up on Android app development documentation where it was mentioned to use Google location services library for the same. My experience wasn't pleasant. It is difficult, complex, and painful to implement. I mean, everytime I want to fetch user's location, I have to do all those things! No way!
-
-I started looking for alternatives. I mean, why do so much of work for such a redundant task? But I couldn't find a suitable library for my use. Hence, I decided to go back to Google location services library. After days of struggle, I was finally able to make it work for all scenarios. Then it hit me - so many developers out there might be going through the same pain as I, specially junior android app developers. Shouldn't there be something as simple as a callback to get user's current location? Hence I decided to publish my work in the form of this library.
-
-+ You don't have to manually add permissions in manifest as the library's manifest contains those and whenever your app builds, manifests are merged resulting in permissions getting added to your app's manifest automatically.
-+ You don't have to add Google location services library in your app's gradle.build file as the library's gradle.build file contains it
-+ You don't have to ask location permission or location optimization permission at runtime because the library handles that for you
-+ You will simply get the location via plug and play of this library.
-
-# Future
-
-The library is in active development. Please post your feature requests/ pull requests/ bug reports in the appropriate section of this repositories.
+Post your feature requests/ pull requests/ bug reports in the appropriate section of this repositories.
 
 Thank you :)
