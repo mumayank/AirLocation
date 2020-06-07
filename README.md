@@ -111,6 +111,6 @@ Example:
 ## Thank you!
 If you love the library, or it has helped you in any way, please give it a star! I'd really appreciate it!
 
-Post your feature requests/ pull requests/ bug reports in the appropriate section of this repositories.
+Post your feature requests/ pull requests/ bug reports in the appropriate section of this repository.
 
 Thank you :)
