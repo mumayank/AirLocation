@@ -8,13 +8,13 @@
 <span class="badge-paypal"><a href="https://www.paypal.me/mumayank" title="Donate to this project using Paypal"><img src="https://img.shields.io/badge/paypal-donate-yellow.svg" alt="PayPal donate button" /></a></span>
 <a href="http://developer.android.com/index.html" target="_blank"><img src="https://img.shields.io/badge/platform-android-green.svg"/></a> <a href="https://android-arsenal.com/api?level=17" target="_blank"><img src="https://img.shields.io/badge/API-17%2B-green.svg?style=flat"/></a> 
 
-An android library to simplify the usage of Google Play services location APIs, to get user's most precise live location via a callback!
+An android library to simplify the usage of Google Play services location APIs, to get the user's most precise live location via a callback!
 
 Jump to [Setup](https://github.com/mumayank/AirLocation/blob/master/README.md#setup "Setup") or [Usage](https://github.com/mumayank/AirLocation/blob/master/README.md#usage "Usage")
 
 Features:
 + The location is precise up to 7 decimal places
-+ Choose to get user's location just one-time, or continue getting live udpates
++ Choose to get user's location just one-time, or continue getting live updates
 + The library takes care of a host of redundant checks and tasks like:
 	+ Declaring the location permissions in the Manifest file
 	+ Adding the Google Play services location APIs library dependency in Gradle
@@ -28,7 +28,7 @@ Features:
 		+ If not, requesting the user to grant permission to change settings.
 + Uses only Google Play services location APIs internally - so you're in safe hands
 + Simple plug and play design
-+ Extremely light weight library (~50KB)
++ Extremely lightweight library (~50KB)
 + **Written in Kotlin (with full Java support)**
 + Android 10+ compatible (gets user's location via foreground location access, i.e., the activity requesting the location must be visible to the user to continue receiving location updates)
 + Takes care of the activity lifecycle
