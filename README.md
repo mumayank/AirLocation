@@ -86,11 +86,11 @@ class MainActivity : AppCompatActivity() {
 	    }  
 		
 	})
-
-	override fun onCreate(savedInstanceState: Bundle?) {  
+	
+	override fun onCreate(savedInstanceState: Bundle?) {
 		...
 		airLocation.start() // CALL .start() WHEN YOU ARE READY TO RECEIVE LOCATION UPDATES
-    }
+	}
     
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         airLocation?.onActivityResult(requestCode, resultCode, data) // ADD THIS LINE INSIDE onActivityResult
