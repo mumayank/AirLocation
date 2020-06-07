@@ -1,60 +1,163 @@
 package mumayank.com.airlocationlibrary
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.content.IntentSender
-import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationManager
 import android.os.Looper
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
-import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
-import com.google.android.gms.tasks.Task
+import mumayank.com.airlocationlibrary.helpers.*
+import java.io.Serializable
 import java.lang.ref.WeakReference
-import java.util.*
 
 @SuppressLint("MissingPermission")
 class AirLocation(
-    private val activity: Activity?,
+    private val activity: Activity,
     private val callback: Callback?,
     private val isLocationRequiredOnlyOneTime: Boolean = false,
-    private val locationInterval: Long = 1000
-) {
-    private var activityWeakReference = WeakReference<Activity>(activity)
-    private var locationCallback: LocationCallback? = null
-    private var fusedLocationClient: FusedLocationProviderClient? = null
-    private val requestCheckSettings = 1235
-    private val requestLocation = 1236
+    private val locationInterval: Long = 1000,
+    private val toastTextWhenOpenAppSettingsIfPermissionsPermanentlyDenied: String = "Please enable location permissions from settings to proceed"
+): Serializable {
+    /*
+    declarations
+     */
+    private lateinit var locationCallback: LocationCallback
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    private var isStartCalled = false
     private var isStopLocationUpdateRequested = false
 
+    private val activityWeakReference = WeakReference(activity)
+
+    private val googlePlayApiHelper = GooglePlayApiHelper(activity, activityWeakReference, fun() {
+        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+            return
+        }
+
+        getLocationPermissions()
+    }, fun() {
+        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+            return
+        }
+
+        callback?.onFailure(LocationFailedEnum.GOOGLE_PLAY_API_NOT_AVAILABLE)
+    })
+
+    private val locationPermissionHelper = LocationPermissionHelper(activity, activityWeakReference, fun() {
+        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+            return
+        }
+
+        checkIfInFlightMode()
+    }, fun() {
+        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+            return
+        }
+
+        callback?.onFailure(LocationFailedEnum.LOCATION_PERMISSION_NOT_GRANTED)
+    }, toastTextWhenOpenAppSettingsIfPermissionsPermanentlyDenied)
+
+    private val locationOptimizationPermissionHelper = LocationOptimizationPermissionHelper(
+        activity,
+        activityWeakReference,
+        locationInterval,
+        isLocationRequiredOnlyOneTime,
+        fun() {
+            if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+                return
+            }
+
+            getFusedLocation()
+        }, fun(locationFailedEnum: LocationFailedEnum) {
+            if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+                return
+            }
+
+            callback?.onFailure(locationFailedEnum)
+        }
+    )
+
     enum class LocationFailedEnum {
-        DeviceInFlightMode,
-        LocationPermissionNotGranted,
-        LocationOptimizationPermissionNotGranted,
-        HighPrecisionNaTryAgainPreferablyWithInternet
+        GOOGLE_PLAY_API_NOT_AVAILABLE,
+        DEVICE_IN_FLIGHT_MODE,
+        LOCATION_PERMISSION_NOT_GRANTED,
+        LOCATION_OPTIMIZATION_PERMISSION_NOT_GRANTED,
+        COULD_NOT_OPTIMIZE_DEVICE_HARDWARE,
+        HIGH_PRECISION_LOCATION_NA_TRY_AGAIN_PREFERABLY_WITH_NETWORK_CONNECTIVITY
     }
 
     interface Callback {
-        fun aOnSuccess(locations: ArrayList<Location>)
-        fun bOnFailed(locationFailedEnum: LocationFailedEnum)
+        fun onSuccess(locations: ArrayList<Location>)
+        fun onFailure(locationFailedEnum: LocationFailedEnum)
     }
 
-    init {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity as Activity)
-        val task = fusedLocationClient?.lastLocation
+    /*
+    start of logic
+     */
+    fun start() {
+        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+            return
+        }
 
+        isStartCalled = true
+        isStopLocationUpdateRequested = false
+        makeGooglePlayApiAvailable()
+    }
+
+    private fun makeGooglePlayApiAvailable() {
+        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+            return
+        }
+
+        googlePlayApiHelper.makeItAvailable()
+    }
+
+    private fun getLocationPermissions() {
+        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+            return
+        }
+
+        locationPermissionHelper.getPermissions()
+    }
+
+    private fun checkIfInFlightMode() {
+        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+            return
+        }
+
+        if (NetworkHelper.isInFlightMode(activityWeakReference.get() as Activity)) {
+            callback?.onFailure(LocationFailedEnum.DEVICE_IN_FLIGHT_MODE)
+        } else {
+            getOptimizationPermissions()
+        }
+    }
+
+    private fun getOptimizationPermissions() {
+        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+            return
+        }
+
+        locationOptimizationPermissionHelper.getPermission()
+    }
+
+    private fun getFusedLocation() {
+        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+            return
+        }
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
+        val task = fusedLocationClient.lastLocation
         task?.addOnSuccessListener { location: Location? ->
+            if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+                return@addOnSuccessListener
+            }
+
             if (location != null) {
-                callback?.aOnSuccess(arrayListOf(location))
+                callback?.onSuccess(arrayListOf(location))
                 if (isLocationRequiredOnlyOneTime.not()) {
                     addLifecycleListener()
                 }
@@ -62,132 +165,77 @@ class AirLocation(
                 addLifecycleListener()
             }
         }?.addOnFailureListener {
+            if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+                return@addOnFailureListener
+            }
+
             addLifecycleListener()
         }
     }
 
     private fun addLifecycleListener() {
+        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+            return
+        }
+
         (activity as LifecycleOwner).lifecycle.addObserver(object : LifecycleObserver {
             @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
             fun connectListener() {
+                if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+                    return
+                }
+
                 if (isStopLocationUpdateRequested.not()) {
-                    addLocationCallback()
+                    requestLocationUpdates()
                 }
             }
 
             @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
             fun disconnectListener() {
-                fusedLocationClient?.removeLocationUpdates(locationCallback)
+                if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+                    return
+                }
+
+                fusedLocationClient.removeLocationUpdates(locationCallback)
             }
         })
     }
 
-    private fun addLocationCallback() {
+    private fun requestLocationUpdates() {
+        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+            return
+        }
 
-        // define location callback now
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
+                if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+                    return
+                }
+
                 locationResult ?: return
-                callback?.aOnSuccess(locationResult.locations as ArrayList<Location>)
+                callback?.onSuccess(locationResult.locations as ArrayList<Location>)
             }
 
-            @SuppressLint("MissingPermission")
             override fun onLocationAvailability(locationAvailability: LocationAvailability?) {
-                super.onLocationAvailability(locationAvailability)
+                if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+                    return
+                }
+
                 if (locationAvailability?.isLocationAvailable == false) {
-                    callback?.bOnFailed(LocationFailedEnum.HighPrecisionNaTryAgainPreferablyWithInternet)
-                    fusedLocationClient?.removeLocationUpdates(locationCallback)
+                    callback?.onFailure(LocationFailedEnum.HIGH_PRECISION_LOCATION_NA_TRY_AGAIN_PREFERABLY_WITH_NETWORK_CONNECTIVITY)
+                    fusedLocationClient.removeLocationUpdates(locationCallback)
                 }
             }
         }
 
-        // check flight mode
-        if (activityWeakReference.get() == null) {
-            return
-        }
-
-        if (NetworkUtil.isInFlightMode(activityWeakReference.get() as Activity)) {
-            callback?.bOnFailed(LocationFailedEnum.DeviceInFlightMode)
-        } else {
-            // check location permissions
-            val permissions = ArrayList<String>()
-            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
-            permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION)
-            var permissionGranted = true
-            for (permission in permissions) {
-                if (ContextCompat.checkSelfPermission(
-                        activityWeakReference.get() as Activity,
-                        permission
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    permissionGranted = false
-                    break
-                }
-            }
-            if (permissionGranted == false) {
-                // request permissions as not present
-                val permissionsArgs = permissions.toTypedArray()
-                ActivityCompat.requestPermissions(
-                    activityWeakReference.get() as Activity,
-                    permissionsArgs,
-                    requestLocation
-                )
-            } else {
-                getLocation()
-            }
-        }
-
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun getLocation() {
-
-        if (activityWeakReference.get() == null) {
-            return
-        }
-
-        val locationRequest = LocationRequest().apply {
-            interval = locationInterval
-            fastestInterval = locationInterval
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            if (isLocationRequiredOnlyOneTime) numUpdates = 1
-        }
-
-        // check current location settings
-        val task: Task<LocationSettingsResponse> =
-            (LocationServices.getSettingsClient(activityWeakReference.get() as Activity))
-                .checkLocationSettings(
-                    (LocationSettingsRequest.Builder().addLocationRequest(
-                        locationRequest
-                    )).build()
-                )
-
-        task.addOnSuccessListener { locationSettingsResponse ->
-            fusedLocationClient?.requestLocationUpdates(
-                locationRequest,
-                locationCallback,
-                Looper.myLooper()
-            )
-        }
-
-        task.addOnFailureListener { exception ->
-            if (exception is ResolvableApiException) {
-                if (activityWeakReference.get() == null) {
-                    return@addOnFailureListener
-                }
-
-                // Location settings are not satisfied, but this can be fixed by showing the user a dialog.
-                try {
-                    // Show the dialog by calling startResolutionForResult(), and check the result in onActivityResult().
-                    exception.startResolutionForResult(
-                        activityWeakReference.get() as Activity,
-                        requestCheckSettings
-                    )
-                } catch (sendEx: IntentSender.SendIntentException) {
-                    // Ignore the error.
-                }
-            }
-        }
+        fusedLocationClient.requestLocationUpdates(
+            LocationOptimizationPermissionHelper.getLocationRequest(
+                locationInterval,
+                isLocationRequiredOnlyOneTime
+            ),
+            locationCallback,
+            Looper.myLooper()
+        )
     }
 
     fun onRequestPermissionsResult(
@@ -195,55 +243,41 @@ class AirLocation(
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-
-        if (activityWeakReference.get() == null) {
+        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
             return
         }
 
-        if (requestCode == requestLocation) {
-            if (grantResults.isEmpty()) {
-                callback?.bOnFailed(LocationFailedEnum.LocationPermissionNotGranted)
-                return
-            }
-
-            var granted = true
-            for (grantResult in grantResults) {
-                if (grantResult != PackageManager.PERMISSION_GRANTED) {
-                    granted = false
-                    break
-                }
-            }
-            if (granted) {
-                getLocation()
-            } else {
-                callback?.bOnFailed(LocationFailedEnum.LocationPermissionNotGranted)
-            }
+        if (isStartCalled.not()) {
+            return
         }
+
+        locationPermissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (activityWeakReference.get() == null) {
+        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
             return
         }
 
-        if (requestCode == requestCheckSettings) {
-            if (resultCode == Activity.RESULT_OK) {
-                getLocation()
-            } else {
-                val locationManager =
-                    (activityWeakReference.get() as Activity).getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    callback?.bOnFailed(LocationFailedEnum.HighPrecisionNaTryAgainPreferablyWithInternet)
-                } else {
-                    callback?.bOnFailed(LocationFailedEnum.LocationOptimizationPermissionNotGranted)
-                }
-            }
+        if (isStartCalled.not()) {
+            return
         }
+
+        locationOptimizationPermissionHelper.onActivityResult(requestCode, resultCode, data)
+        googlePlayApiHelper.onActivityResult(requestCode, resultCode, data)
     }
 
     fun stopLocationUpdates() {
+        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+            return
+        }
+
+        if (isStartCalled.not()) {
+            return
+        }
+
         isStopLocationUpdateRequested = true
-        fusedLocationClient?.removeLocationUpdates(locationCallback)
+        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
 }
