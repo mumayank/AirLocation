@@ -74,6 +74,7 @@ Example:
 class MainActivity : AppCompatActivity() {
 
     private val airLocation = AirLocation(this, object : AirLocation.Callback {  
+	
 	    override fun onSuccess(locations: ArrayList<Location>) {  
 	        // do something 
 	        // the entire track is sent in locations
@@ -83,14 +84,13 @@ class MainActivity : AppCompatActivity() {
 	        // do something 
 	        // the reason for failure is given in locationFailedEnum
 	    }  
+		
 	})
 
 	override fun onCreate(savedInstanceState: Bundle?) {  
-	    ...
-	    airLocation.start() // CALL .start() WHEN YOU ARE READY TO RECEIVE LOCATION UPDATES
+		...
+		airLocation.start() // CALL .start() WHEN YOU ARE READY TO RECEIVE LOCATION UPDATES
     }
-    
-    ...
     
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         airLocation?.onActivityResult(requestCode, resultCode, data) // ADD THIS LINE INSIDE onActivityResult
