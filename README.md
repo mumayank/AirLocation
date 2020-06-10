@@ -15,14 +15,14 @@ Features:
 + The library takes care of a host of redundant checks and tasks like:
 	+ Declaring the location permissions in the Manifest file
 	+ Adding the Google Play services location APIs library dependency in Gradle
-	+ Checking if Google Play services are available and up to date or not.
-		+ If not, requesting the user to update it, along with providing an option to do so.
-	+ Checking if location permissions are available or not. 
-		+ If not, requesting the user at runtime to grant the permissions. 
-		+ Also checking if the permissions are permanently disabled by the user.
+	+ Checking if Google Play services are available and up to date or not
+		+ If not, requesting the user to update it, along with providing an option to do so
+	+ Checking if location permissions are available or not
+		+ If not, requesting the user at runtime to grant the permissions
+		+ Also checking if the permissions are permanently disabled by the user
 			+ If so, taking the user to the app's settings page and requesting to manually grant the permissions.
 	+ Checking if the device hardware settings are optimized or not (GPS is on, Wifi is on, etc)
-		+ If not, requesting the user to grant permission to change settings.
+		+ If not, requesting the user to grant permission to change settings automatically
 + Uses only Google Play services location APIs internally - so you're in safe hands
 + Simple plug and play design
 + Extremely lightweight library (~50KB)
@@ -63,7 +63,6 @@ where LATEST_VERSION is [![](https://jitpack.io/v/mumayank/AirLocation.svg)](htt
 2. To start receiving live location, call `airLocation.start()`
 3. Override `onActivityResult` and call `airLocation.onActivityResult()`
 4. Override `onRequestPermissionsResult` and call `airLocation.onRequestPermissionsResult()`
-5. (Optional) To stop receiving the live location, call `airLocation.stopLocationUpdates()`
 
 Example:
 ```kotlin
