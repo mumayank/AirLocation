@@ -13,75 +13,70 @@ import mumayank.com.airlocationlibrary.AirLocation
 import java.lang.ref.WeakReference
 
 class LocationOptimizationPermissionHelper(
-    private val activity: Activity,
-    private val activityWeakReference: WeakReference<Activity>,
+    activity: Activity,
     private val locationInterval: Long,
     private val isLocationRequiredOnlyOneTime: Boolean,
     private val onSuccess: (() -> Unit)?,
     private val onFailure: ((locationFailedEnum: AirLocation.LocationFailedEnum) -> Unit)?
 ) {
+    private val activityWeakReference = WeakReference(activity)
+
     fun getPermission() {
-        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
-            return
-        }
+        val activityTemp = activityWeakReference.get() ?: return
 
         // check current location settings
-        (LocationServices.getSettingsClient(activity))
+        (LocationServices.getSettingsClient(activityTemp)
             .checkLocationSettings(
                 (LocationSettingsRequest.Builder().addLocationRequest(
                     getLocationRequest(locationInterval, isLocationRequiredOnlyOneTime)
                 )).build()
             ).addOnSuccessListener { locationSettingsResponse ->
-                if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+                if (activityWeakReference.get() == null) {
                     return@addOnSuccessListener
                 }
 
                 onSuccess?.invoke()
             }.addOnFailureListener { exception ->
                 if (exception is ResolvableApiException) {
-                    if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
-                        return@addOnFailureListener
-                    }
+                    val activityTemp2 = activityWeakReference.get() ?: return@addOnFailureListener
 
                     // Location settings are not satisfied, but this can be fixed by showing the user a dialog.
                     try {
                         // Show the dialog by calling startResolutionForResult(), and check the result in onActivityResult().
                         exception.startResolutionForResult(
-                            activityWeakReference.get() as Activity,
+                            activityTemp2,
                             REQUEST_CODE
                         )
                     } catch (sendEx: IntentSender.SendIntentException) {
                         onFailure?.invoke(AirLocation.LocationFailedEnum.COULD_NOT_OPTIMIZE_DEVICE_HARDWARE)
                     }
                 } else {
-                    if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+                    if (activityWeakReference.get() == null) {
                         return@addOnFailureListener
                     }
 
                     onFailure?.invoke(AirLocation.LocationFailedEnum.COULD_NOT_OPTIMIZE_DEVICE_HARDWARE)
                 }
-            }
+            })
     }
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
-            return
-        }
+        val activityTemp = activityWeakReference.get() ?: return
 
         if (requestCode == REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 onSuccess?.invoke()
             } else {
                 val locationManager =
-                    (activity).getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                    activityTemp.getSystemService(Context.LOCATION_SERVICE) as LocationManager
                 if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+                    if (activityWeakReference.get() == null) {
                         return
                     }
 
                     onFailure?.invoke(AirLocation.LocationFailedEnum.HIGH_PRECISION_LOCATION_NA_TRY_AGAIN_PREFERABLY_WITH_NETWORK_CONNECTIVITY)
                 } else {
-                    if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+                    if (activityWeakReference.get() == null) {
                         return
                     }
 

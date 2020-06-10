@@ -18,7 +18,7 @@ import java.lang.ref.WeakReference
 
 @SuppressLint("MissingPermission")
 class AirLocation(
-    private val activity: Activity,
+    activity: Activity,
     private val callback: Callback?,
     private val isLocationRequiredOnlyOneTime: Boolean = false,
     private val locationInterval: Long = 0,
@@ -34,14 +34,14 @@ class AirLocation(
 
     private val activityWeakReference = WeakReference(activity)
 
-    private val googlePlayApiHelper = GooglePlayApiHelper(activity, activityWeakReference, fun() {
-        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+    private val googlePlayApiHelper = GooglePlayApiHelper(activity, fun() {
+        if (activityWeakReference.get() == null) {
             return
         }
 
         getLocationPermissions()
     }, fun() {
-        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+        if (activityWeakReference.get() == null) {
             return
         }
 
@@ -59,17 +59,16 @@ class AirLocation(
 
     private val locationOptimizationPermissionHelper = LocationOptimizationPermissionHelper(
         activity,
-        activityWeakReference,
         locationInterval,
         isLocationRequiredOnlyOneTime,
         fun() {
-            if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+            if (activityWeakReference.get() == null) {
                 return
             }
 
             getFusedLocation()
         }, fun(locationFailedEnum: LocationFailedEnum) {
-            if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+            if (activityWeakReference.get() == null) {
                 return
             }
 
@@ -95,7 +94,7 @@ class AirLocation(
     start of logic
      */
     fun start() {
-        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+        if (activityWeakReference.get() == null) {
             return
         }
 
@@ -104,7 +103,7 @@ class AirLocation(
     }
 
     private fun makeGooglePlayApiAvailable() {
-        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+        if (activityWeakReference.get() == null) {
             return
         }
 
@@ -112,7 +111,7 @@ class AirLocation(
     }
 
     private fun getLocationPermissions() {
-        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+        if (activityWeakReference.get() == null) {
             return
         }
 
@@ -120,7 +119,7 @@ class AirLocation(
     }
 
     private fun checkIfInFlightMode() {
-        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+        if (activityWeakReference.get() == null) {
             return
         }
 
@@ -132,7 +131,7 @@ class AirLocation(
     }
 
     private fun getOptimizationPermissions() {
-        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+        if (activityWeakReference.get() == null) {
             return
         }
 
@@ -140,14 +139,12 @@ class AirLocation(
     }
 
     private fun getFusedLocation() {
-        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
-            return
-        }
+        val activityTemp = activityWeakReference.get() ?: return
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(activityTemp)
         val task = fusedLocationClient.lastLocation
         task?.addOnSuccessListener { location: Location? ->
-            if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+            if (activityWeakReference.get() == null) {
                 return@addOnSuccessListener
             }
 
@@ -160,7 +157,7 @@ class AirLocation(
                 addLifecycleListener()
             }
         }?.addOnFailureListener {
-            if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+            if (activityWeakReference.get() == null) {
                 return@addOnFailureListener
             }
 
@@ -169,14 +166,12 @@ class AirLocation(
     }
 
     private fun addLifecycleListener() {
-        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
-            return
-        }
+        val activityTemp = activityWeakReference.get() ?: return
 
-        (activity as LifecycleOwner).lifecycle.addObserver(object : LifecycleObserver {
+        (activityTemp as LifecycleOwner).lifecycle.addObserver(object : LifecycleObserver {
             @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
             fun connectListener() {
-                if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+                if (activityWeakReference.get() == null) {
                     return
                 }
 
@@ -185,7 +180,7 @@ class AirLocation(
 
             @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
             fun disconnectListener() {
-                if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+                if (activityWeakReference.get() == null) {
                     return
                 }
 
@@ -195,13 +190,13 @@ class AirLocation(
     }
 
     private fun requestLocationUpdates() {
-        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+        if (activityWeakReference.get() == null) {
             return
         }
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
-                if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+                if (activityWeakReference.get() == null) {
                     return
                 }
 
@@ -210,7 +205,7 @@ class AirLocation(
             }
 
             override fun onLocationAvailability(locationAvailability: LocationAvailability?) {
-                if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+                if (activityWeakReference.get() == null) {
                     return
                 }
 
@@ -236,7 +231,7 @@ class AirLocation(
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+        if (activityWeakReference.get() == null) {
             return
         }
 
@@ -248,7 +243,7 @@ class AirLocation(
     }
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+        if (activityWeakReference.get() == null) {
             return
         }
 
@@ -258,7 +253,7 @@ class AirLocation(
 
         airPermissions.onActivityResult(requestCode)
         locationOptimizationPermissionHelper.onActivityResult(requestCode, resultCode, data)
-        googlePlayApiHelper.onActivityResult(requestCode, resultCode, data)
+        googlePlayApiHelper.onActivityResult(requestCode)
     }
 
 }

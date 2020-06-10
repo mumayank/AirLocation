@@ -12,27 +12,26 @@ import androidx.core.content.ContextCompat
 import java.lang.ref.WeakReference
 
 class LocationPermissionHelper(
-    private val activity: Activity,
-    private val activityWeakReference: WeakReference<Activity>,
+    activity: Activity,
     private val onSuccess: (() -> Unit)?,
     private val onFailure: (() -> Unit)?,
     private val toastTextWhenOpenAppSettingsIfPermissionsPermanentlyDenied: String
 ) {
+    private val activityWeakReference = WeakReference(activity)
+
     fun getPermissions() {
-        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
-            return
-        }
+        val activityTemp = activityWeakReference.get() ?: return
 
         if (permissionList.all {
                 ContextCompat.checkSelfPermission(
-                    activity,
+                    activityTemp,
                     it
                 ) == PackageManager.PERMISSION_GRANTED
             }) {
             onSuccess?.invoke()
         } else {
             ActivityCompat.requestPermissions(
-                activityWeakReference.get() as Activity,
+                activityTemp,
                 permissionList.toTypedArray(),
                 REQUEST_CODE
             )
@@ -44,9 +43,7 @@ class LocationPermissionHelper(
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
-            return
-        }
+        val activityTemp = activityWeakReference.get() ?: return
 
         when (requestCode) {
             REQUEST_CODE -> {
@@ -59,14 +56,14 @@ class LocationPermissionHelper(
                     onSuccess?.invoke()
                 } else {
                     if (permissionList.any {
-                            (ContextCompat.checkSelfPermission(activity, it)
+                            (ContextCompat.checkSelfPermission(activityTemp, it)
                                     != PackageManager.PERMISSION_GRANTED)
                                     && (ActivityCompat.shouldShowRequestPermissionRationale(
-                                activity, it
+                                activityTemp, it
                             ).not())
                         }) {
                         openAppPermissionSettings(
-                            activity,
+                            activityTemp,
                             toastTextWhenOpenAppSettingsIfPermissionsPermanentlyDenied
                         )
                     } else {

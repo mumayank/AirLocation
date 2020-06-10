@@ -7,31 +7,28 @@ import com.google.android.gms.common.GoogleApiAvailability
 import java.lang.ref.WeakReference
 
 class GooglePlayApiHelper(
-    private val activity: Activity,
-    private val activityWeakReference: WeakReference<Activity>,
+    activity: Activity,
     private val onSuccess: (() -> Unit)?,
     private val onFailure: (() -> Unit)?
 ) {
+    private val activityWeakReference = WeakReference(activity)
+
     fun makeItAvailable() {
-        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
-            return
-        }
+        val activityTemp = activityWeakReference.get() ?: return
 
         val googlePlayServiceAvailability =
-            GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(activity)
+            GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(activityTemp)
         if (googlePlayServiceAvailability == ConnectionResult.SUCCESS) {
-            if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+            if (activityWeakReference.get() == null) {
                 return
             }
 
             onSuccess?.invoke()
         } else {
-            if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
-                return
-            }
+            val activityTemp2 = activityWeakReference.get() ?: return
 
             val errorDialog = GoogleApiAvailability.getInstance().getErrorDialog(
-                activity,
+                activityTemp2,
                 googlePlayServiceAvailability,
                 REQUEST_CODE
             ) {
@@ -42,8 +39,8 @@ class GooglePlayApiHelper(
 
     }
 
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (ActivityHelper.isActivityWeakReferenceNull(activityWeakReference)) {
+    fun onActivityResult(requestCode: Int) {
+        if (activityWeakReference.get() == null) {
             return
         }
 
