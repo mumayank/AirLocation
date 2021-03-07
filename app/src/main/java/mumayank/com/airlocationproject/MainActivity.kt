@@ -6,25 +6,27 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.main_activity.*
 import mumayank.com.airlocationlibrary.AirLocation
+import mumayank.com.airlocationproject.databinding.MainActivityBinding
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: MainActivityBinding
+
     private val airLocation = AirLocation(this, object : AirLocation.Callback {
         override fun onSuccess(locations: ArrayList<Location>) {
-            progressBar.visibility = View.GONE
+            binding.progressBar.visibility = View.GONE
             var string = "\n"
             for (location in locations) {
                 string = "${location.longitude}, ${location.latitude}\n$string"
             }
-            string = "$string${textView2.text}"
-            textView2.text = string
+            string = "$string${binding.textView2.text}"
+            binding.textView2.text = string
         }
 
         override fun onFailure(locationFailedEnum: AirLocation.LocationFailedEnum) {
-            progressBar.visibility = View.GONE
+            binding.progressBar.visibility = View.GONE
             Toast.makeText(this@MainActivity, locationFailedEnum.name, Toast.LENGTH_SHORT)
                 .show()
         }
@@ -32,12 +34,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.main_activity)
+        binding = MainActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        progressBar.visibility = View.GONE
+        binding.progressBar.visibility = View.GONE
 
-        button2.setOnClickListener {
-            progressBar.visibility = View.VISIBLE
+        binding.button2.setOnClickListener {
+            binding.progressBar.visibility = View.VISIBLE
             airLocation.start()
         }
 

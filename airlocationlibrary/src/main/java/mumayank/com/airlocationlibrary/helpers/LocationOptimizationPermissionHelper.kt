@@ -94,7 +94,7 @@ class LocationOptimizationPermissionHelper(
             locationInterval: Long,
             isLocationRequiredOnlyOneTime: Boolean
         ): LocationRequest {
-            return LocationRequest().apply {
+            return LocationRequest.create().apply {
                 interval = locationInterval
                 fastestInterval = locationInterval
                 priority = LocationRequest.PRIORITY_HIGH_ACCURACY

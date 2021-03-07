@@ -143,7 +143,7 @@ class AirLocation(
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(activityTemp)
         val task = fusedLocationClient.lastLocation
-        task?.addOnSuccessListener { location: Location? ->
+        task.addOnSuccessListener { location: Location? ->
             if (activityWeakReference.get() == null) {
                 return@addOnSuccessListener
             }
@@ -156,7 +156,7 @@ class AirLocation(
             } else {
                 addLifecycleListener()
             }
-        }?.addOnFailureListener {
+        }.addOnFailureListener {
             if (activityWeakReference.get() == null) {
                 return@addOnFailureListener
             }
@@ -222,7 +222,7 @@ class AirLocation(
                 isLocationRequiredOnlyOneTime
             ),
             locationCallback,
-            Looper.myLooper()
+            Looper.getMainLooper()
         )
     }
 

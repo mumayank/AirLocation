@@ -11,6 +11,10 @@ class GooglePlayApiHelper(
     private val onSuccess: (() -> Unit)?,
     private val onFailure: (() -> Unit)?
 ) {
+    companion object {
+        private const val REQUEST_CODE = 1237
+    }
+
     private val activityWeakReference = WeakReference(activity)
 
     fun makeItAvailable() {
@@ -34,7 +38,7 @@ class GooglePlayApiHelper(
             ) {
                 onFailure?.invoke()
             }
-            errorDialog.show()
+            errorDialog?.show()
         }
 
     }
@@ -47,9 +51,5 @@ class GooglePlayApiHelper(
         if (requestCode == REQUEST_CODE) {
             makeItAvailable()
         }
-    }
-
-    companion object {
-        private const val REQUEST_CODE = 1237
     }
 }
