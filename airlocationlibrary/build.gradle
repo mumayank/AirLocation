@@ -18,6 +18,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.30"
     api 'com.google.android.gms:play-services-location:18.0.0'
     implementation 'com.github.mumayank:AirPermissionsLibraryProject:3.1'
+    implementation 'com.github.jitpack:gradle-simple:1.0'
 }
 
 repositories {
